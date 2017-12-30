@@ -2,20 +2,25 @@ package vertex;
 
 
 import motors.BenzineMotor;
+import motors.DieselMotor;
 import motors.Motor;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Graph graph = new Graph();
         CarsOnTheStreet carsOnTheStreet = new CarsOnTheStreet();
 
         Vertex vertex1 = new Vertex(1);
         Vertex vertex2 = new Vertex(2);
         Vertex vertex3 = new Vertex(3);
-        Vertex vertex4 = new VertexWithCarService(4);
+        Vertex vertex4 = new Vertex(4);
+
+        ArrayList<Vertex> carServices = new ArrayList<>(Collections.singletonList(vertex4));
 
 
         graph.addVertex(vertex1);
@@ -36,7 +41,11 @@ public class Main {
         ExecutorService executor = Executors.newFixedThreadPool(5);
 
         Motor motor = new BenzineMotor();
-        executor.submit(new Car(graph, vertex1, motor, carsOnTheStreet));
+        executor.submit(new Car("1", graph, vertex1, motor, carServices, carsOnTheStreet));
+
+        Thread.sleep(2000);
+        Motor motor2 = new DieselMotor();
+        executor.submit(new Car("2", graph, vertex1, motor2, carServices, carsOnTheStreet));
 
     }
 }
