@@ -1,18 +1,29 @@
 package vertex;
 
 
+import motors.Motor;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Random;
 
 public class Car implements Runnable {
     private Graph graph;
-    private Vertex entryPoint;
-    private Vertex nextIntersection;
+    private Vertex startVertex;
+    private Motor motor;
+    private CarsOnTheStreet carsOnTheStreet;
+    private Vertex currentIntersection;
+    private double pollution = 0;
 
-    Car(Graph graph, Vertex entryPoint) {
+    Car(Graph graph, Vertex startVertex, Motor motor, CarsOnTheStreet carsOnTheStreet) {
         this.graph = graph;
-        this.entryPoint = entryPoint;
+        this.startVertex = startVertex;
+        this.motor = motor;
+        this.carsOnTheStreet = carsOnTheStreet;
+    }
+
+    public Motor getMotor() {
+        return motor;
     }
 
     private Optional<Vertex> getRandom(Collection<Vertex> adjVertices) {
@@ -23,29 +34,35 @@ public class Car implements Runnable {
 
     @Override
     public void run() {
-        driveCarToRandomNextIntersectionFrom(entryPoint);
+        carsOnTheStreet.addCar(this);
+        driveCarToRandomNextIntersectionFrom(startVertex);
 
         int counter = 1;
 
         while (counter <= 100) {
+            if (counter % 5 == 0) {
+                carsOnTheStreet.sendPollutionData(pollution);
+                pollution = 0;
+            }
 
-            if (nextIntersection.getLabel() == 4) {
+            if (currentIntersection instanceof VertexWithCarService) {
                 System.out.println("Servicing");
             }
 
-            driveCarToRandomNextIntersectionFrom(nextIntersection);
-
+            driveCarToRandomNextIntersectionFrom(currentIntersection);
             counter++;
         }
     }
 
     private void driveCarToRandomNextIntersectionFrom(Vertex startVertex) {
         Optional<Vertex> getNextRandomVertex = getRandom(graph.getAdjVertices(startVertex));
-        getNextRandomVertex.ifPresent(vertex -> nextIntersection = vertex);
+        getNextRandomVertex.ifPresent(vertex -> currentIntersection = vertex);
 
         try {
+            System.out.println("Riding from " + startVertex + " to " + currentIntersection);
             Thread.sleep(getStreetDriveTime());
-            System.out.println("Riding from " + startVertex + " to " + nextIntersection);
+            pollution += motor.getPollutionRatio();
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
