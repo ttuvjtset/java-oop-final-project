@@ -3,6 +3,7 @@ package vertex;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Random;
 
 public class Car implements Runnable {
     private Graph graph;
@@ -14,42 +15,44 @@ public class Car implements Runnable {
         this.entryPoint = entryPoint;
     }
 
-    private static <E> Optional<E> getRandom(Collection<E> e) {
-
-        return e.stream()
-                .skip((int) (e.size() * Math.random()))
+    private Optional<Vertex> getRandom(Collection<Vertex> adjVertices) {
+        return adjVertices.stream()
+                .skip((int) (adjVertices.size() * Math.random()))
                 .findFirst();
     }
 
     @Override
     public void run() {
-        int counter = 0;
+        driveCarToRandomNextIntersectionFrom(entryPoint);
+
+        int counter = 1;
+
         while (counter <= 100) {
 
-
-            Optional<Vertex> getNextRandomVertex;
-            if (counter == 0) {
-                getNextRandomVertex = getRandom(graph.getAdjVertices(entryPoint));
-            } else {
-                if (nextIntersection.getLabel() == 4) {
-                    System.out.println("Servicing");
-                }
-                getNextRandomVertex = getRandom(graph.getAdjVertices(nextIntersection));
+            if (nextIntersection.getLabel() == 4) {
+                System.out.println("Servicing");
             }
 
+            driveCarToRandomNextIntersectionFrom(nextIntersection);
 
-            if (getNextRandomVertex.isPresent()) {
-                nextIntersection = getNextRandomVertex.get();
-                System.out.println(nextIntersection);
-            }
-            try {
-                Thread.sleep(100);
-                System.out.println("Riding");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             counter++;
         }
+    }
+
+    private void driveCarToRandomNextIntersectionFrom(Vertex startVertex) {
+        Optional<Vertex> getNextRandomVertex = getRandom(graph.getAdjVertices(startVertex));
+        getNextRandomVertex.ifPresent(vertex -> nextIntersection = vertex);
+
+        try {
+            Thread.sleep(getStreetDriveTime());
+            System.out.println("Riding from " + startVertex + " to " + nextIntersection);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getStreetDriveTime() {
+        return new Random().nextInt(200 - 30) + 30;
     }
 
 
