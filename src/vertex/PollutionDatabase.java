@@ -3,20 +3,22 @@ package vertex;
 import motors.BenzineMotor;
 import motors.DieselMotor;
 import motors.Motor;
+import restrictions.Restriction;
+import restrictions.RestrictionForBenzine;
+import restrictions.RestrictionForDiesel;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.DoubleAdder;
 
 
-class PollutionDB {
+class PollutionDatabase {
     private ArrayList<Motor> motors;
     private DoubleAdder totalPollutionAmount;
-    private volatile Block block;
-    Object object1 = new Object();
-    Object object2 = new Object();
+    private DrivingRestrictions drivingRestrictions;
 
-    PollutionDB(Block block) {
-        this.block = block;
+
+    PollutionDatabase(DrivingRestrictions drivingRestrictions) {
+        this.drivingRestrictions = drivingRestrictions;
         this.motors = new ArrayList<>();
         this.totalPollutionAmount = new DoubleAdder();
     }
@@ -35,15 +37,19 @@ class PollutionDB {
         }
     }
 
-    double blockConditionMetForDieselCars() throws InterruptedException {
+    double blockConditionMetForCars(Restriction restriction) throws InterruptedException {
         synchronized (this) {
-            while (totalPollutionAmount.doubleValue() < 400) {
+            while (totalPollutionAmount.doubleValue() < restriction.getPollutionRestriction()) {
                 wait();
             }
 
-            block.setBlockedForDieselCars();
-            System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja dizelja " + block.isBlockedForDieselCars());
-
+            if (restriction instanceof RestrictionForDiesel) {
+                drivingRestrictions.setBlockedForDieselCars();
+                System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja dizelja " + drivingRestrictions.isBlockedForDieselCars());
+            } else if (restriction instanceof RestrictionForBenzine) {
+                drivingRestrictions.setBlockedForBenzineCars();
+                System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja benzina " + drivingRestrictions.isBlockedForBenzineCars());
+            }
 
             return totalPollutionAmount.doubleValue();
         }
@@ -55,8 +61,8 @@ class PollutionDB {
                 wait();
             }
 
-            block.setBlockedForBenzineCars();
-            System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja benzina " + block.isBlockedForBenzineCars());
+            drivingRestrictions.setBlockedForBenzineCars();
+            System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja benzina " + drivingRestrictions.isBlockedForBenzineCars());
 
             return totalPollutionAmount.doubleValue();
         }
@@ -65,19 +71,19 @@ class PollutionDB {
     void askPermissionToDrive(Motor motor) throws InterruptedException {
         synchronized (this) {
             if (motor instanceof BenzineMotor) {
-                while (block.isBlockedForBenzineCars()) {
+                while (drivingRestrictions.isBlockedForBenzineCars()) {
                     System.out.println("BLOCKED for Benzine");
                     wait();
                 }
                 System.out.println(">>>UNBLOCKED for Benzine");
             }
             if (motor instanceof DieselMotor) {
-                while (block.isBlockedForDieselCars()) {
+                while (drivingRestrictions.isBlockedForDieselCars()) {
                     System.out.println("BLOCKED for Diesel");
                     wait();
                 }
-                System.out.println(">>>UNBLOCKED for Diesel " + block.isBlockedForBenzineCars() + " "
-                        + block.isBlockedForDieselCars());
+                System.out.println(">>>UNBLOCKED for Diesel " + drivingRestrictions.isBlockedForBenzineCars() + " "
+                        + drivingRestrictions.isBlockedForDieselCars());
             }
         }
     }
@@ -95,8 +101,5 @@ class PollutionDB {
 
     }
 
-//    private boolean blockingCondition(Motor motor) {
-//        return (totalPollutionAmount.doubleValue() > 100 && totalPollutionAmount.doubleValue() < 200)
-//                && motor instanceof DieselMotor;
-//    }
+
 }

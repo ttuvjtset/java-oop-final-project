@@ -1,7 +1,7 @@
 package vertex;
 
 
-class Block {
+class DrivingRestrictions {
     private volatile boolean blockedBenzineCars = false;
     private volatile boolean blockedDieselCars = false;
 
@@ -19,11 +19,6 @@ class Block {
 
     void setBlockedForDieselCars() {
         blockedDieselCars = true;
-    }
-
-    void releaseAllBlocks() {
-        blockedBenzineCars = false;
-        blockedDieselCars = false;
     }
 
     void releaseBenzineBlock() {

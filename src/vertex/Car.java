@@ -1,6 +1,8 @@
 package vertex;
 
 
+import map.Graph;
+import map.Vertex;
 import motors.Motor;
 
 import java.util.ArrayList;
@@ -15,19 +17,19 @@ public class Car implements Runnable {
     private Motor motor;
     private ArrayList<Vertex> carServices;
     private CarsOnTheStreet carsOnTheStreet;
-    private PollutionDB pollutionDB;
+    private PollutionDatabase pollutionDatabase;
     private Vertex currentIntersection;
     private double pollution = 0;
 
     Car(String s, Graph graph, Vertex startVertex, Motor motor, ArrayList<Vertex> carServices,
-        CarsOnTheStreet carsOnTheStreet, PollutionDB pollutionDB) {
+        CarsOnTheStreet carsOnTheStreet, PollutionDatabase pollutionDatabase) {
         this.s = s;
         this.graph = graph;
         this.startVertex = startVertex;
         this.motor = motor;
         this.carServices = carServices;
         this.carsOnTheStreet = carsOnTheStreet;
-        this.pollutionDB = pollutionDB;
+        this.pollutionDatabase = pollutionDatabase;
     }
 
     public Motor getMotor() {
@@ -49,7 +51,7 @@ public class Car implements Runnable {
 
         while (true) {
             if (counter % 5 == 0) {
-                pollutionDB.addPollutionAmount(motor, pollution);
+                pollutionDatabase.addPollutionAmount(motor, pollution);
                 System.out.println("Adding pollution" + pollution + " and nulling");
                 pollution = 0;
             }
@@ -57,7 +59,7 @@ public class Car implements Runnable {
             if (counter % 7 == 0) {
                 try {
                     System.out.println(s + " ======================Asking permission");
-                    pollutionDB.askPermissionToDrive(motor);
+                    pollutionDatabase.askPermissionToDrive(motor);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
