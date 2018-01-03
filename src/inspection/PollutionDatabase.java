@@ -68,25 +68,25 @@ public class PollutionDatabase {
         return totalPollutionAmount.doubleValue() < restriction.getPollutionRestriction();
     }
 
-    public boolean isFurtherDrivingCurrentlyAllowed(Motor motor) throws InterruptedException {
+    public boolean isFurtherDrivingCurrentlyBlocked(Motor motor) throws InterruptedException {
         synchronized (this) {
-            boolean furtherDrivingAllowed = false;
+            boolean furtherDrivingBlocked = false;
 
             if (motor instanceof BenzineMotor) {
                 while (drivingRestrictionTable.isBlockedForBenzine()) {
                     wait();
-                    furtherDrivingAllowed = true;
+                    furtherDrivingBlocked = true;
                 }
             }
 
             if (motor instanceof DieselMotor) {
                 while (drivingRestrictionTable.isBlockedForDiesel()) {
                     wait();
-                    furtherDrivingAllowed = true;
+                    furtherDrivingBlocked = true;
                 }
             }
 
-            return furtherDrivingAllowed;
+            return furtherDrivingBlocked;
         }
     }
 

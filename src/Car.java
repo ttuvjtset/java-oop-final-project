@@ -67,7 +67,7 @@ public class Car implements Runnable {
                 try {
                     System.out.println(motor.getMotorType() + carID + "Asking permission to continue driving");
                     boolean furtherDrivingBlockedBecauseOfMotor = pollutionDatabase.
-                            isFurtherDrivingCurrentlyAllowed(motor);
+                            isFurtherDrivingCurrentlyBlocked(motor);
 
                     if (furtherDrivingBlockedBecauseOfMotor) {
                         waitingTimesBecauseOfNonEcoFriendlyMotor++;
