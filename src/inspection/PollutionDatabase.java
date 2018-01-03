@@ -1,6 +1,9 @@
+package inspection;
+
 import motors.BenzineMotor;
 import motors.DieselMotor;
 import motors.Motor;
+import restrictions.DrivingRestrictionTable;
 import restrictions.Restriction;
 import restrictions.RestrictionForBenzine;
 import restrictions.RestrictionForDiesel;
@@ -9,14 +12,14 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.DoubleAdder;
 
 
-class PollutionDatabase {
+public class PollutionDatabase {
     private ArrayList<Motor> motors;
     private DoubleAdder totalPollutionAmount;
-    private DrivingRestrictions drivingRestrictions;
+    private DrivingRestrictionTable drivingRestrictionTable;
 
 
-    PollutionDatabase(DrivingRestrictions drivingRestrictions) {
-        this.drivingRestrictions = drivingRestrictions;
+    public PollutionDatabase(DrivingRestrictionTable drivingRestrictionTable) {
+        this.drivingRestrictionTable = drivingRestrictionTable;
         this.motors = new ArrayList<>();
         this.totalPollutionAmount = new DoubleAdder();
     }
@@ -25,7 +28,7 @@ class PollutionDatabase {
         return motors.stream().filter(motor -> motor instanceof BenzineMotor || motor instanceof DieselMotor).count();
     }
 
-    void addPollutionAmount(Motor motor, double pollution) {
+    public void addPollutionAmount(Motor motor, double pollution) {
         synchronized (this) {
             if (!motors.contains(motor)) {
                 motors.add(motor);
@@ -45,9 +48,9 @@ class PollutionDatabase {
             }
 
             if (restriction instanceof RestrictionForDiesel) {
-                drivingRestrictions.setBlockForDiesel();
+                drivingRestrictionTable.setBlockForDiesel();
             } else if (restriction instanceof RestrictionForBenzine) {
-                drivingRestrictions.setBlockForBenzine();
+                drivingRestrictionTable.setBlockForBenzine();
             }
 
             return totalPollutionAmount.doubleValue();
@@ -58,16 +61,16 @@ class PollutionDatabase {
         return totalPollutionAmount.doubleValue() < restriction.getPollutionRestriction();
     }
 
-    void askPermissionToContinueDriving(Motor motor) throws InterruptedException {
+    public void askPermissionToContinueDriving(Motor motor) throws InterruptedException {
         synchronized (this) {
             if (motor instanceof BenzineMotor) {
-                while (drivingRestrictions.isBlockedForBenzine()) {
+                while (drivingRestrictionTable.isBlockedForBenzine()) {
                     wait();
                 }
             }
 
             if (motor instanceof DieselMotor) {
-                while (drivingRestrictions.isBlockedForDiesel()) {
+                while (drivingRestrictionTable.isBlockedForDiesel()) {
                     wait();
                 }
             }

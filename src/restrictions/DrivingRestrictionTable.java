@@ -1,28 +1,30 @@
-class DrivingRestrictions {
+package restrictions;
+
+public class DrivingRestrictionTable {
     private volatile boolean drivingIsBlockedForBenzine = false;
     private volatile boolean drivingIsBlockedForDiesel = false;
 
-    boolean isBlockedForBenzine() {
+    public boolean isBlockedForBenzine() {
         return drivingIsBlockedForBenzine;
     }
 
-    boolean isBlockedForDiesel() {
+    public boolean isBlockedForDiesel() {
         return drivingIsBlockedForDiesel;
     }
 
-    void setBlockForBenzine() {
+    public void setBlockForBenzine() {
         drivingIsBlockedForBenzine = true;
     }
 
-    void setBlockForDiesel() {
+    public void setBlockForDiesel() {
         drivingIsBlockedForDiesel = true;
     }
 
-    void releaseBlockForBenzine() {
+    public void releaseBlockForBenzine() {
         drivingIsBlockedForBenzine = false;
     }
 
-    void releaseBlockForDiesel() {
+    public void releaseBlockForDiesel() {
         drivingIsBlockedForDiesel = false;
     }
 }

@@ -1,7 +1,10 @@
+import inspection.Inspection;
+import inspection.PollutionDatabase;
 import map.Graph;
 import map.Vertex;
 import motors.BenzineMotor;
 import motors.DieselMotor;
+import restrictions.DrivingRestrictionTable;
 import restrictions.Restriction;
 import restrictions.RestrictionForBenzine;
 import restrictions.RestrictionForDiesel;
@@ -14,9 +17,9 @@ import java.util.concurrent.Executors;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         Graph graph = new Graph();
-        //CarsOnTheStreet carsOnTheStreet = new CarsOnTheStreet();
-        DrivingRestrictions drivingRestrictions = new DrivingRestrictions();
-        PollutionDatabase pollutionDatabase = new PollutionDatabase(drivingRestrictions);
+
+        DrivingRestrictionTable drivingRestrictionTable = new DrivingRestrictionTable();
+        PollutionDatabase pollutionDatabase = new PollutionDatabase(drivingRestrictionTable);
         Restriction restrictionForBenzine = new RestrictionForBenzine();
         Restriction restrictionForDiesel = new RestrictionForDiesel();
 
@@ -40,12 +43,9 @@ public class Main {
 
         System.out.println(graph.getAdjList());
 
-        //System.out.println(graph.getAdjVertices(vertex3));
-        //System.out.println(graph.getAdjVertices(vertex4));
-
         ExecutorService executor = Executors.newFixedThreadPool(5);
-        executor.submit(new Inspection(pollutionDatabase, drivingRestrictions, restrictionForBenzine));
-        executor.submit(new Inspection(pollutionDatabase, drivingRestrictions, restrictionForDiesel));
+        executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForBenzine));
+        executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForDiesel));
         executor.submit(new Car("BENZINE1", graph, vertex1, new BenzineMotor(), carServices, pollutionDatabase));
 
         Thread.sleep(2000);

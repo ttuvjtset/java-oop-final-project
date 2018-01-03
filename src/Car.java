@@ -1,3 +1,4 @@
+import inspection.PollutionDatabase;
 import map.Graph;
 import map.Vertex;
 import motors.Motor;
@@ -28,9 +29,9 @@ public class Car implements Runnable {
         this.pollution = 0;
     }
 
-    public Motor getMotor() {
+/*    public Motor getMotor() {
         return motor;
-    }
+    }*/
 
     private Optional<Vertex> getRandom(Collection<Vertex> adjVertices) {
         return adjVertices.stream()
@@ -85,6 +86,4 @@ public class Car implements Runnable {
     private int getStreetDriveTime() {
         return new Random().nextInt(200 - 30) + 30;
     }
-
-
 }
