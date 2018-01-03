@@ -47,9 +47,10 @@ public class Car implements Runnable {
 
         int counter = 1;
 
-        while (counter <= 100) {
+        while (true) {
             if (counter % 5 == 0) {
                 pollutionDB.addPollutionAmount(motor, pollution);
+                System.out.println("Adding pollution" + pollution + " and nulling");
                 pollution = 0;
             }
 

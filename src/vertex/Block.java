@@ -10,7 +10,7 @@ class Block {
     }
 
     boolean isBlockedForDieselCars() {
-        return blockedBenzineCars;
+        return blockedDieselCars;
     }
 
     void setBlockedForBenzineCars() {

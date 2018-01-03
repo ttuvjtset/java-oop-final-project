@@ -41,11 +41,11 @@ public class Main {
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
         executor.submit(new Nadzor(pollutionDB, block));
-        executor.submit(new Car("1", graph, vertex1, new BenzineMotor(), carServices, carsOnTheStreet, pollutionDB));
+        executor.submit(new Car("1BENZ ", graph, vertex1, new BenzineMotor(), carServices, carsOnTheStreet, pollutionDB));
 
         Thread.sleep(2000);
 
-        executor.submit(new Car("2", graph, vertex1, new DieselMotor(), carServices, carsOnTheStreet, pollutionDB));
+        executor.submit(new Car("2DIESEL", graph, vertex1, new DieselMotor(), carServices, carsOnTheStreet, pollutionDB));
 
     }
 }

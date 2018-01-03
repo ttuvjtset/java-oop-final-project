@@ -1,5 +1,6 @@
 package vertex;
 
+import motors.BenzineMotor;
 import motors.DieselMotor;
 import motors.Motor;
 
@@ -10,7 +11,9 @@ import java.util.concurrent.atomic.DoubleAdder;
 class PollutionDB {
     private ArrayList<Motor> motors;
     private DoubleAdder totalPollutionAmount;
-    private Block block;
+    private volatile Block block;
+    Object object1 = new Object();
+    Object object2 = new Object();
 
     PollutionDB(Block block) {
         this.block = block;
@@ -32,27 +35,41 @@ class PollutionDB {
         }
     }
 
-    double blockConditionMet() throws InterruptedException {
+    double blockConditionMetForBenzineCars() throws InterruptedException {
         synchronized (this) {
-            while (totalPollutionAmount.doubleValue() <= 400) {
+            while (totalPollutionAmount.doubleValue() < 400) {
                 wait();
             }
-            if (totalPollutionAmount.doubleValue() > 400 && totalPollutionAmount.doubleValue() <= 500) {
+            if (totalPollutionAmount.doubleValue() >= 400 && totalPollutionAmount.doubleValue() <= 500) {
                 block.setBlockedForDieselCars();
+                System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja dizelja " + block.isBlockedForDieselCars());
             }
             if (totalPollutionAmount.doubleValue() > 500) {
-                block.setBlockedForDieselCars();
                 block.setBlockedForBenzineCars();
+                System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja benzina " + block.isBlockedForBenzineCars());
             }
             return totalPollutionAmount.doubleValue();
         }
     }
 
+
+
     void askPermissionToDrive(Motor motor) throws InterruptedException {
         synchronized (this) {
-            while (block.isBlockedForBenzineCars()) {
-                System.out.println("BLOCKED");
-                wait();
+            if (motor instanceof BenzineMotor) {
+                while (block.isBlockedForBenzineCars()) {
+                    System.out.println("BLOCKED for Benzine");
+                    wait();
+                }
+                System.out.println(">>>UNBLOCKED for Benzine");
+            }
+            if (motor instanceof DieselMotor) {
+                while (block.isBlockedForDieselCars()) {
+                    System.out.println("BLOCKED for Diesel");
+                    wait();
+                }
+                System.out.println(">>>UNBLOCKED for Diesel " + block.isBlockedForBenzineCars() + " "
+                        + block.isBlockedForDieselCars());
             }
         }
     }
@@ -64,11 +81,14 @@ class PollutionDB {
     }
 
     void resetPollutionCounter() {
-        totalPollutionAmount.reset();
+        synchronized (this) {
+            totalPollutionAmount.reset();
+        }
+
     }
 
-    private boolean blockingCondition(Motor motor) {
-        return (totalPollutionAmount.doubleValue() > 100 && totalPollutionAmount.doubleValue() < 200)
-                && motor instanceof DieselMotor;
-    }
+//    private boolean blockingCondition(Motor motor) {
+//        return (totalPollutionAmount.doubleValue() > 100 && totalPollutionAmount.doubleValue() < 200)
+//                && motor instanceof DieselMotor;
+//    }
 }
