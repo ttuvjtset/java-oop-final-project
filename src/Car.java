@@ -1,6 +1,3 @@
-package vertex;
-
-
 import map.Graph;
 import map.Vertex;
 import motors.Motor;

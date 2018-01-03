@@ -1,5 +1,3 @@
-package vertex;
-
 import motors.BenzineMotor;
 import motors.DieselMotor;
 import motors.Motor;
@@ -31,59 +29,43 @@ class PollutionDatabase {
             }
 
             totalPollutionAmount.add(pollution);
-            System.out.println("ADDED:" + totalPollutionAmount.doubleValue());
-
             notifyAll();
         }
     }
 
-    double blockConditionMetForCars(Restriction restriction) throws InterruptedException {
+    double getTotalPollutionWhenRestrictionApplies(Restriction restriction) throws InterruptedException {
         synchronized (this) {
-            while (totalPollutionAmount.doubleValue() < restriction.getPollutionRestriction()) {
+            while (pollutionIsUnderLimit(restriction)) {
                 wait();
             }
 
             if (restriction instanceof RestrictionForDiesel) {
-                drivingRestrictions.setBlockedForDieselCars();
-                System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja dizelja " + drivingRestrictions.isBlockedForDieselCars());
+                drivingRestrictions.setBlockForDiesel();
             } else if (restriction instanceof RestrictionForBenzine) {
-                drivingRestrictions.setBlockedForBenzineCars();
-                System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja benzina " + drivingRestrictions.isBlockedForBenzineCars());
+                drivingRestrictions.setBlockForBenzine();
             }
 
             return totalPollutionAmount.doubleValue();
         }
     }
 
-    double blockConditionMetForBenzineCars() throws InterruptedException {
-        synchronized (this) {
-            while (totalPollutionAmount.doubleValue() < 500) {
-                wait();
-            }
-
-            drivingRestrictions.setBlockedForBenzineCars();
-            System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja benzina " + drivingRestrictions.isBlockedForBenzineCars());
-
-            return totalPollutionAmount.doubleValue();
-        }
+    private boolean pollutionIsUnderLimit(Restriction restriction) {
+        return totalPollutionAmount.doubleValue() < restriction.getPollutionRestriction();
     }
+
 
     void askPermissionToDrive(Motor motor) throws InterruptedException {
         synchronized (this) {
             if (motor instanceof BenzineMotor) {
-                while (drivingRestrictions.isBlockedForBenzineCars()) {
-                    System.out.println("BLOCKED for Benzine");
+                while (drivingRestrictions.isBlockedForBenzine()) {
                     wait();
                 }
-                System.out.println(">>>UNBLOCKED for Benzine");
             }
+
             if (motor instanceof DieselMotor) {
-                while (drivingRestrictions.isBlockedForDieselCars()) {
-                    System.out.println("BLOCKED for Diesel");
+                while (drivingRestrictions.isBlockedForDiesel()) {
                     wait();
                 }
-                System.out.println(">>>UNBLOCKED for Diesel " + drivingRestrictions.isBlockedForBenzineCars() + " "
-                        + drivingRestrictions.isBlockedForDieselCars());
             }
         }
     }
@@ -98,8 +80,5 @@ class PollutionDatabase {
         synchronized (this) {
             totalPollutionAmount.reset();
         }
-
     }
-
-
 }

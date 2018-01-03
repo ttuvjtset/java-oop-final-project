@@ -1,5 +1,3 @@
-package vertex;
-
 import motors.Motor;
 
 import java.util.ArrayList;

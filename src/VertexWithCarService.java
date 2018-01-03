@@ -1,6 +1,3 @@
-package vertex;
-
-
 import map.Vertex;
 
 public class VertexWithCarService extends Vertex {
