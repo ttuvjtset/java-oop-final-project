@@ -17,11 +17,14 @@ public class PollutionDatabase {
     private DoubleAdder totalPollutionAmount;
     private DrivingRestrictionTable drivingRestrictionTable;
 
-
     public PollutionDatabase(DrivingRestrictionTable drivingRestrictionTable) {
         this.drivingRestrictionTable = drivingRestrictionTable;
         this.motors = new ArrayList<>();
         this.totalPollutionAmount = new DoubleAdder();
+    }
+
+    public void removeMotor(Motor motor) {
+        motors.remove(motor);
     }
 
     long getInternalCombustionMotorCount() {
@@ -30,14 +33,18 @@ public class PollutionDatabase {
 
     public void addPollutionAmount(Motor motor, double pollution) {
         synchronized (this) {
-            if (!motors.contains(motor)) {
-                motors.add(motor);
-            }
+            firstCarRegistration(motor);
 
             totalPollutionAmount.add(pollution);
             System.out.println("Pollution added: + " + pollution
                     + "                           = " + totalPollutionAmount);
             notifyAll();
+        }
+    }
+
+    public void firstCarRegistration(Motor motor) {
+        if (!motors.contains(motor)) {
+            motors.add(motor);
         }
     }
 
@@ -61,19 +68,25 @@ public class PollutionDatabase {
         return totalPollutionAmount.doubleValue() < restriction.getPollutionRestriction();
     }
 
-    public void askPermissionToContinueDriving(Motor motor) throws InterruptedException {
+    public boolean isFurtherDrivingCurrentlyAllowed(Motor motor) throws InterruptedException {
         synchronized (this) {
+            boolean furtherDrivingAllowed = false;
+
             if (motor instanceof BenzineMotor) {
                 while (drivingRestrictionTable.isBlockedForBenzine()) {
                     wait();
+                    furtherDrivingAllowed = true;
                 }
             }
 
             if (motor instanceof DieselMotor) {
                 while (drivingRestrictionTable.isBlockedForDiesel()) {
                     wait();
+                    furtherDrivingAllowed = true;
                 }
             }
+
+            return furtherDrivingAllowed;
         }
     }
 
@@ -89,4 +102,5 @@ public class PollutionDatabase {
             totalPollutionAmount.add(pollutionAmountAfterReset);
         }
     }
+
 }

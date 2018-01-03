@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -24,13 +25,15 @@ public class Main {
         Restriction restrictionForBenzine = new RestrictionForBenzine();
         Restriction restrictionForDiesel = new RestrictionForDiesel();
 
+        AtomicInteger uniqueCarIDs = new AtomicInteger(1);
+
         Vertex vertex1 = new Vertex(1);
         Vertex vertex2 = new Vertex(2);
         Vertex vertex3 = new Vertex(3);
         Vertex vertex4 = new Vertex(4);
 
-        ArrayList<Vertex> carServices = new ArrayList<>(Collections.singletonList(vertex4));
-        ArrayList<CarServiceQueue> carServiceQueues = new ArrayList<>(Collections.singletonList(new CarServiceQueue()));
+        ArrayList<Vertex> carServiceIntersections = new ArrayList<>(Collections.singletonList(vertex4));
+        ArrayList<CarService> carServices = new ArrayList<>(Collections.singletonList(new CarService(pollutionDatabase)));
 
         graph.addVertex(vertex1);
         graph.addVertex(vertex2);
@@ -47,11 +50,14 @@ public class Main {
         ExecutorService executor = Executors.newFixedThreadPool(10);
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForBenzine));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForDiesel));
-        executor.submit(new Car("BENZINE1", graph, vertex1, new BenzineMotor(), carServices, carServiceQueues, pollutionDatabase));
+        executor.submit(new Car(uniqueCarIDs, graph, vertex1, new BenzineMotor(), carServiceIntersections,
+                carServices, pollutionDatabase));
 
         Thread.sleep(2000);
 
-        executor.submit(new Car("DIESEL2 ", graph, vertex1, new DieselMotor(), carServices, carServiceQueues, pollutionDatabase));
-        executor.submit(new Car("LEMONADE3", graph, vertex1, new LemonadeMotor(), carServices, carServiceQueues, pollutionDatabase));
+        executor.submit(new Car(uniqueCarIDs, graph, vertex1, new DieselMotor(), carServiceIntersections,
+                carServices, pollutionDatabase));
+        executor.submit(new Car(uniqueCarIDs, graph, vertex1, new LemonadeMotor(), carServiceIntersections,
+                carServices, pollutionDatabase));
     }
 }

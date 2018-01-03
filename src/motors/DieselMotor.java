@@ -5,4 +5,9 @@ public class DieselMotor implements Motor {
     public double getPollutionRatio() {
         return 3;
     }
+
+    @Override
+    public String getMotorType() {
+        return "Diesel";
+    }
 }

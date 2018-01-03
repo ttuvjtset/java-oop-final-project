@@ -6,4 +6,9 @@ public class ElectricMotor implements Motor {
     public double getPollutionRatio() {
         return 0.1;
     }
+
+    @Override
+    public String getMotorType() {
+        return "Electric";
+    }
 }

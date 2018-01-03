@@ -6,4 +6,9 @@ public class BenzineMotor implements Motor {
     public double getPollutionRatio() {
         return 2;
     }
+
+    @Override
+    public String getMotorType() {
+        return "Benzine";
+    }
 }
