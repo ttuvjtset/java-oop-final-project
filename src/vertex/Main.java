@@ -13,7 +13,8 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         Graph graph = new Graph();
         CarsOnTheStreet carsOnTheStreet = new CarsOnTheStreet();
-        PollutionDB pollutionDB = new PollutionDB();
+        Block block = new Block();
+        PollutionDB pollutionDB = new PollutionDB(block);
 
         Vertex vertex1 = new Vertex(1);
         Vertex vertex2 = new Vertex(2);
@@ -39,7 +40,7 @@ public class Main {
         //System.out.println(graph.getAdjVertices(vertex4));
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
-       // executor.submit(new Nadzor(pollutionDB));
+        executor.submit(new Nadzor(pollutionDB, block));
         executor.submit(new Car("1", graph, vertex1, new BenzineMotor(), carServices, carsOnTheStreet, pollutionDB));
 
         Thread.sleep(2000);

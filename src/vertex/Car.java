@@ -55,6 +55,7 @@ public class Car implements Runnable {
 
             if (counter % 7 == 0) {
                 try {
+                    System.out.println(s + " ======================Asking permission");
                     pollutionDB.askPermissionToDrive(motor);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

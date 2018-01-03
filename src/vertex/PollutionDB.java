@@ -9,20 +9,11 @@ import java.util.concurrent.atomic.DoubleAdder;
 
 class PollutionDB {
     private ArrayList<Motor> motors;
-
-//    public double getTotalPollutionAmount() throws InterruptedException {
-//        synchronized (this) {
-//            while (totalPollutionAmount.doubleValue() < 100 && totalPollutionAmount.doubleValue() > 200) {
-//                System.out.println("BLOCKED nadzor");
-//                wait();
-//            }
-//            return totalPollutionAmount.doubleValue();
-//        }
-//    }
-
     private DoubleAdder totalPollutionAmount;
+    private Block block;
 
-    PollutionDB() {
+    PollutionDB(Block block) {
+        this.block = block;
         this.motors = new ArrayList<>();
         this.totalPollutionAmount = new DoubleAdder();
     }
@@ -41,14 +32,39 @@ class PollutionDB {
         }
     }
 
+    double blockConditionMet() throws InterruptedException {
+        synchronized (this) {
+            while (totalPollutionAmount.doubleValue() <= 400) {
+                wait();
+            }
+            if (totalPollutionAmount.doubleValue() > 400 && totalPollutionAmount.doubleValue() <= 500) {
+                block.setBlockedForDieselCars();
+            }
+            if (totalPollutionAmount.doubleValue() > 500) {
+                block.setBlockedForDieselCars();
+                block.setBlockedForBenzineCars();
+            }
+            return totalPollutionAmount.doubleValue();
+        }
+    }
+
     void askPermissionToDrive(Motor motor) throws InterruptedException {
         synchronized (this) {
-            while (blockingCondition(motor)) {
+            while (block.isBlockedForBenzineCars()) {
                 System.out.println("BLOCKED");
-
                 wait();
             }
         }
+    }
+
+    void informAboutUnblock() {
+        synchronized (this) {
+            notifyAll();
+        }
+    }
+
+    void resetPollutionCounter() {
+        totalPollutionAmount.reset();
     }
 
     private boolean blockingCondition(Motor motor) {
