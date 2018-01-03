@@ -4,6 +4,7 @@ import map.Graph;
 import map.Vertex;
 import motors.BenzineMotor;
 import motors.DieselMotor;
+import motors.LemonadeMotor;
 import restrictions.DrivingRestrictionTable;
 import restrictions.Restriction;
 import restrictions.RestrictionForBenzine;
@@ -30,7 +31,6 @@ public class Main {
 
         ArrayList<Vertex> carServices = new ArrayList<>(Collections.singletonList(vertex4));
 
-
         graph.addVertex(vertex1);
         graph.addVertex(vertex2);
         graph.addVertex(vertex3);
@@ -43,7 +43,7 @@ public class Main {
 
         System.out.println(graph.getAdjList());
 
-        ExecutorService executor = Executors.newFixedThreadPool(5);
+        ExecutorService executor = Executors.newFixedThreadPool(10);
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForBenzine));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForDiesel));
         executor.submit(new Car("BENZINE1", graph, vertex1, new BenzineMotor(), carServices, pollutionDatabase));
@@ -51,6 +51,6 @@ public class Main {
         Thread.sleep(2000);
 
         executor.submit(new Car("DIESEL2 ", graph, vertex1, new DieselMotor(), carServices, pollutionDatabase));
-
+        executor.submit(new Car("LEMONADE3", graph, vertex1, new LemonadeMotor(), carServices, pollutionDatabase));
     }
 }
