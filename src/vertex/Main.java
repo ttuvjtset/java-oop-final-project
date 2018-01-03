@@ -3,7 +3,6 @@ package vertex;
 
 import motors.BenzineMotor;
 import motors.DieselMotor;
-import motors.Motor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +13,7 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         Graph graph = new Graph();
         CarsOnTheStreet carsOnTheStreet = new CarsOnTheStreet();
+        PollutionDB pollutionDB = new PollutionDB();
 
         Vertex vertex1 = new Vertex(1);
         Vertex vertex2 = new Vertex(2);
@@ -39,13 +39,12 @@ public class Main {
         //System.out.println(graph.getAdjVertices(vertex4));
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
-
-        Motor motor = new BenzineMotor();
-        executor.submit(new Car("1", graph, vertex1, motor, carServices, carsOnTheStreet));
+       // executor.submit(new Nadzor(pollutionDB));
+        executor.submit(new Car("1", graph, vertex1, new BenzineMotor(), carServices, carsOnTheStreet, pollutionDB));
 
         Thread.sleep(2000);
-        Motor motor2 = new DieselMotor();
-        executor.submit(new Car("2", graph, vertex1, motor2, carServices, carsOnTheStreet));
+
+        executor.submit(new Car("2", graph, vertex1, new DieselMotor(), carServices, carsOnTheStreet, pollutionDB));
 
     }
 }

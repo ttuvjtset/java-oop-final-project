@@ -15,16 +15,19 @@ public class Car implements Runnable {
     private Motor motor;
     private ArrayList<Vertex> carServices;
     private CarsOnTheStreet carsOnTheStreet;
+    private PollutionDB pollutionDB;
     private Vertex currentIntersection;
     private double pollution = 0;
 
-    Car(String s, Graph graph, Vertex startVertex, Motor motor, ArrayList<Vertex> carServices, CarsOnTheStreet carsOnTheStreet) {
+    Car(String s, Graph graph, Vertex startVertex, Motor motor, ArrayList<Vertex> carServices,
+        CarsOnTheStreet carsOnTheStreet, PollutionDB pollutionDB) {
         this.s = s;
         this.graph = graph;
         this.startVertex = startVertex;
         this.motor = motor;
         this.carServices = carServices;
         this.carsOnTheStreet = carsOnTheStreet;
+        this.pollutionDB = pollutionDB;
     }
 
     public Motor getMotor() {
@@ -46,13 +49,13 @@ public class Car implements Runnable {
 
         while (counter <= 100) {
             if (counter % 5 == 0) {
-                carsOnTheStreet.updatePollutionData(this, pollution);
+                pollutionDB.addPollutionAmount(motor, pollution);
                 pollution = 0;
             }
 
             if (counter % 7 == 0) {
                 try {
-                    carsOnTheStreet.askPermissionToDrive(this);
+                    pollutionDB.askPermissionToDrive(motor);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
