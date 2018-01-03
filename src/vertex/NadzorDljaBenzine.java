@@ -1,11 +1,11 @@
 package vertex;
 
 
-public class Nadzor implements Runnable {
+public class NadzorDljaBenzine implements Runnable {
     private PollutionDB pollutionDB;
     private volatile Block block;
 
-    public Nadzor(PollutionDB pollutionDB, Block block) {
+    public NadzorDljaBenzine(PollutionDB pollutionDB, Block block) {
 
         this.pollutionDB = pollutionDB;
         this.block = block;
@@ -23,17 +23,18 @@ public class Nadzor implements Runnable {
             }
 
             try {
-                System.out.println("...................Waiting 5000 ms..............");
+                System.out.println("........BENSINE.BLOCK...............................Waiting 5000 ms..............");
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            block.releaseAllBlocks();
+            block.releaseBenzineBlock();
             System.out.println("block released");
             pollutionDB.resetPollutionCounter();
             pollutionDB.informAboutUnblock();
             System.out.println("tyt");
+            System.out.println("........BENSINE.UNBLOCK...........................................UNBLOCKED..............");
 
         }
     }

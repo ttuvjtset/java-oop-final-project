@@ -40,7 +40,8 @@ public class Main {
         //System.out.println(graph.getAdjVertices(vertex4));
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
-        executor.submit(new Nadzor(pollutionDB, block));
+        executor.submit(new NadzorDljaDizele(pollutionDB, block));
+        executor.submit(new NadzorDljaBenzine(pollutionDB, block));
         executor.submit(new Car("1BENZ ", graph, vertex1, new BenzineMotor(), carServices, carsOnTheStreet, pollutionDB));
 
         Thread.sleep(2000);

@@ -35,24 +35,32 @@ class PollutionDB {
         }
     }
 
-    double blockConditionMetForBenzineCars() throws InterruptedException {
+    double blockConditionMetForDieselCars() throws InterruptedException {
         synchronized (this) {
             while (totalPollutionAmount.doubleValue() < 400) {
                 wait();
             }
-            if (totalPollutionAmount.doubleValue() >= 400 && totalPollutionAmount.doubleValue() <= 500) {
-                block.setBlockedForDieselCars();
-                System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja dizelja " + block.isBlockedForDieselCars());
-            }
-            if (totalPollutionAmount.doubleValue() > 500) {
-                block.setBlockedForBenzineCars();
-                System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja benzina " + block.isBlockedForBenzineCars());
-            }
+
+            block.setBlockedForDieselCars();
+            System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja dizelja " + block.isBlockedForDieselCars());
+
+
             return totalPollutionAmount.doubleValue();
         }
     }
 
+    double blockConditionMetForBenzineCars() throws InterruptedException {
+        synchronized (this) {
+            while (totalPollutionAmount.doubleValue() < 500) {
+                wait();
+            }
 
+            block.setBlockedForBenzineCars();
+            System.out.println("!!!!!!!!!!!!!!!ZABLOKIROVANO dlja benzina " + block.isBlockedForBenzineCars());
+
+            return totalPollutionAmount.doubleValue();
+        }
+    }
 
     void askPermissionToDrive(Motor motor) throws InterruptedException {
         synchronized (this) {

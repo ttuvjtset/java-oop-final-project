@@ -25,4 +25,12 @@ class Block {
         blockedBenzineCars = false;
         blockedDieselCars = false;
     }
+
+    void releaseBenzineBlock() {
+        blockedBenzineCars = false;
+    }
+
+    void releaseDieselBlock() {
+        blockedDieselCars = false;
+    }
 }
