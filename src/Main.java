@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         Graph graph = new Graph();
-        CarsOnTheStreet carsOnTheStreet = new CarsOnTheStreet();
+        //CarsOnTheStreet carsOnTheStreet = new CarsOnTheStreet();
         DrivingRestrictions drivingRestrictions = new DrivingRestrictions();
         PollutionDatabase pollutionDatabase = new PollutionDatabase(drivingRestrictions);
         Restriction restrictionForBenzine = new RestrictionForBenzine();
@@ -46,11 +46,11 @@ public class Main {
         ExecutorService executor = Executors.newFixedThreadPool(5);
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictions, restrictionForBenzine));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictions, restrictionForDiesel));
-        executor.submit(new Car("1BENZ ", graph, vertex1, new BenzineMotor(), carServices, carsOnTheStreet, pollutionDatabase));
+        executor.submit(new Car("BENZINE1", graph, vertex1, new BenzineMotor(), carServices, pollutionDatabase));
 
         Thread.sleep(2000);
 
-        executor.submit(new Car("2DIESEL", graph, vertex1, new DieselMotor(), carServices, carsOnTheStreet, pollutionDatabase));
+        executor.submit(new Car("DIESEL2 ", graph, vertex1, new DieselMotor(), carServices, pollutionDatabase));
 
     }
 }

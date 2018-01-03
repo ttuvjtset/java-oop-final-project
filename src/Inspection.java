@@ -16,10 +16,15 @@ public class Inspection implements Runnable {
     @Override
     public void run() {
         while (!Thread.interrupted()) {
+            double pollutionAmountAfterReset = 0;
+
             try {
-                double pollutionWhenBlockIssued = pollutionDatabase.getTotalPollutionWhenRestrictionApplies(restriction);
-                System.out.println("pollutionWhenBlockIssued " + pollutionWhenBlockIssued);
-                System.out.println(drivingRestrictions.isBlockedForDiesel() + " " + drivingRestrictions.isBlockedForBenzine());
+                double pollutionWhenRestrictionApplies = pollutionDatabase.getTotalPollutionWhenRestrictionApplies(restriction);
+                if (pollutionDatabase.getInternalCombustionMotorCount() >= 70) {
+                    pollutionAmountAfterReset = pollutionWhenRestrictionApplies * 0.4;
+                }
+                System.out.println("====== PollutionWhenRestrictionApplies: " + pollutionWhenRestrictionApplies + " ======");
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -37,10 +42,10 @@ public class Inspection implements Runnable {
                 drivingRestrictions.releaseBlockForBenzine();
             }
 
-            System.out.println("drivingRestrictions released");
-            pollutionDatabase.resetPollutionCounter();
-            pollutionDatabase.informAboutUnblock();
-            System.out.println("tyt");
+            System.out.println("====== Driving Restrictions Released ======");
+            pollutionDatabase.resetPollutionCounter(pollutionAmountAfterReset);
+            pollutionDatabase.informAboutReleasedRestrictions();
+
             System.out.println("........" + restriction.getPollutionRestriction() + ".UNBLOCK..........................................UNBLOCKED..............");
 
         }

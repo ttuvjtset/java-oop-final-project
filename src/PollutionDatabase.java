@@ -21,14 +21,19 @@ class PollutionDatabase {
         this.totalPollutionAmount = new DoubleAdder();
     }
 
-    void addPollutionAmount(Motor motor, double pollution) {
+    long getInternalCombustionMotorCount() {
+        return motors.stream().filter(motor -> motor instanceof BenzineMotor || motor instanceof DieselMotor).count();
+    }
 
+    void addPollutionAmount(Motor motor, double pollution) {
         synchronized (this) {
             if (!motors.contains(motor)) {
                 motors.add(motor);
             }
 
             totalPollutionAmount.add(pollution);
+            System.out.println("Pollution added: + " + pollution
+                    + "                           = " + totalPollutionAmount);
             notifyAll();
         }
     }
@@ -53,8 +58,7 @@ class PollutionDatabase {
         return totalPollutionAmount.doubleValue() < restriction.getPollutionRestriction();
     }
 
-
-    void askPermissionToDrive(Motor motor) throws InterruptedException {
+    void askPermissionToContinueDriving(Motor motor) throws InterruptedException {
         synchronized (this) {
             if (motor instanceof BenzineMotor) {
                 while (drivingRestrictions.isBlockedForBenzine()) {
@@ -70,15 +74,16 @@ class PollutionDatabase {
         }
     }
 
-    void informAboutUnblock() {
+    void informAboutReleasedRestrictions() {
         synchronized (this) {
             notifyAll();
         }
     }
 
-    void resetPollutionCounter() {
+    void resetPollutionCounter(double pollutionAmountAfterReset) {
         synchronized (this) {
             totalPollutionAmount.reset();
+            totalPollutionAmount.add(pollutionAmountAfterReset);
         }
     }
 }
