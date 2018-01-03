@@ -14,17 +14,19 @@ public class Car implements Runnable {
     private Vertex startVertex;
     private Motor motor;
     private ArrayList<Vertex> carServices;
+    private ArrayList<CarServiceQueue> carServiceQueues;
     private PollutionDatabase pollutionDatabase;
     private Vertex currentIntersection;
     private double pollution;
 
     Car(String carName, Graph graph, Vertex startVertex, Motor motor, ArrayList<Vertex> carServices,
-        PollutionDatabase pollutionDatabase) {
+        ArrayList<CarServiceQueue> carServiceQueues, PollutionDatabase pollutionDatabase) {
         this.carName = carName;
         this.graph = graph;
         this.startVertex = startVertex;
         this.motor = motor;
         this.carServices = carServices;
+        this.carServiceQueues = carServiceQueues;
         this.pollutionDatabase = pollutionDatabase;
         this.pollution = 0;
     }
@@ -60,13 +62,42 @@ public class Car implements Runnable {
                 }
             }
 
-            if (carServices.contains(currentIntersection)) {
-                System.out.println("$$$ Servicing Stop $$$");
+            if (currentIntersectionIsACarService()) {
+                doCarService();
             }
 
             driveCarToNextRandomIntersectionFromThe(currentIntersection);
             intersectionCounter++;
         }
+    }
+
+    private void doCarService() {
+        CarServiceQueue carServiceQueue = carServiceQueues.get(carServices.indexOf(currentIntersection));
+        try {
+            carServiceQueue.addCarToQueue(this);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("$$$ Beginning service works for " + carName + " $$$");
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("$$$ End of service works for + " + carName + " $$$");
+
+        try {
+            carServiceQueue.removeCarFromQueue();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean currentIntersectionIsACarService() {
+        return carServices.contains(currentIntersection);
     }
 
     private void driveCarToNextRandomIntersectionFromThe(Vertex startVertex) {
