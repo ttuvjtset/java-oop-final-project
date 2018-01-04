@@ -8,28 +8,34 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 public class Car implements Runnable {
     private String carID;
     private Graph graph;
     private Vertex startVertex;
+    private ArrayList<BadRoad> badRoads;
     private Motor motor;
     private ArrayList<Vertex> carServiceIntersections;
     private ArrayList<CarService> carServices;
     private PollutionDatabase pollutionDatabase;
+    private FlatTyreInformer flatTyreInformer;
     private Vertex currentIntersection;
     private double pollution;
     private boolean needToChangeAMotorAtService;
 
-    Car(AtomicInteger id, Graph graph, Vertex startVertex, Motor motor, ArrayList<Vertex> carServiceIntersections,
-        ArrayList<CarService> carServices, PollutionDatabase pollutionDatabase) {
+    Car(AtomicInteger id, Graph graph, Vertex startVertex, ArrayList<BadRoad> badRoads, Motor motor,
+        ArrayList<Vertex> carServiceIntersections,
+        ArrayList<CarService> carServices, PollutionDatabase pollutionDatabase, FlatTyreInformer flatTyreInformer) {
         this.carID = String.valueOf(id.getAndIncrement());
         this.graph = graph;
         this.startVertex = startVertex;
+        this.badRoads = badRoads;
         this.motor = motor;
         this.carServiceIntersections = carServiceIntersections;
         this.carServices = carServices;
         this.pollutionDatabase = pollutionDatabase;
+        this.flatTyreInformer = flatTyreInformer;
         this.pollution = 0;
         this.needToChangeAMotorAtService = false;
     }
@@ -50,11 +56,15 @@ public class Car implements Runnable {
 
     @Override
     public void run() {
+        //first street driving
         pollutionDatabase.firstCarRegistration(motor);
         driveCarToNextRandomIntersectionFromThe(startVertex);
 
+
+        //intersection
         int intersectionCounter = 1;
         int waitingTimesBecauseOfNonEcoFriendlyMotor = 0;
+        int drivenThroughBadStreetCounter = 0;
 
         while (!Thread.interrupted()) {
 
@@ -88,9 +98,34 @@ public class Car implements Runnable {
                 doCarService();
             }
 
+            //driving to next intersection
+            Vertex drivingFromIntersection = currentIntersection;
             driveCarToNextRandomIntersectionFromThe(currentIntersection);
+            Vertex drivingToIntersection = currentIntersection;
+
+            Optional<BadRoad> wasTheStreetBad = badRoads.stream()
+                    .filter(wasCurrentStreetBad(drivingFromIntersection, drivingToIntersection))
+                    .findAny();
+
+            if (wasTheStreetBad.isPresent()) {
+                drivenThroughBadStreetCounter++;
+                System.out.println(motor.getMotorType() + carID + "Bad street!!!!! Counter: "
+                        + drivenThroughBadStreetCounter);
+            }
+
+            if (drivenThroughBadStreetCounter == 3) {
+                flatTyreInformer.informAndAddToList(this, drivingToIntersection);
+            }
+
             intersectionCounter++;
         }
+    }
+
+    private Predicate<BadRoad> wasCurrentStreetBad(Vertex drivingFromIntersection, Vertex drivingToIntersection) {
+        return badRoad -> (badRoad.getFirstIntersection().equals(drivingFromIntersection)
+                && badRoad.getSecondIntersection().equals(drivingToIntersection)
+                || (badRoad.getFirstIntersection().equals(drivingToIntersection)
+                && badRoad.getSecondIntersection().equals(drivingFromIntersection)));
     }
 
     private boolean carOwnerDecidesToChangeMotorToEcoFriendly(int waitingTimesBecauseOfMotorCounter) {

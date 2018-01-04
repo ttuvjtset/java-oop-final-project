@@ -25,6 +25,8 @@ public class Main {
         Restriction restrictionForBenzine = new RestrictionForBenzine();
         Restriction restrictionForDiesel = new RestrictionForDiesel();
 
+        FlatTyreInformer flatTyreInformer = new FlatTyreInformer();
+
         AtomicInteger uniqueCarIDs = new AtomicInteger(1);
 
         Vertex vertex1 = new Vertex(1);
@@ -46,18 +48,22 @@ public class Main {
         graph.addEdge(4, 2);
 
         System.out.println(graph.getAdjList());
+        System.out.println(graph.getEdges());
+
+        BadRoad badRoad = new BadRoad(vertex2, vertex3);
+        ArrayList<BadRoad> badRoads = new ArrayList<>(Collections.singletonList(badRoad));
+
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForBenzine));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForDiesel));
-        executor.submit(new Car(uniqueCarIDs, graph, vertex1, new BenzineMotor(), carServiceIntersections,
-                carServices, pollutionDatabase));
+        executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new BenzineMotor(), carServiceIntersections,
+                carServices, pollutionDatabase, flatTyreInformer));
 
         Thread.sleep(2000);
-
-        executor.submit(new Car(uniqueCarIDs, graph, vertex1, new DieselMotor(), carServiceIntersections,
-                carServices, pollutionDatabase));
-        executor.submit(new Car(uniqueCarIDs, graph, vertex1, new LemonadeMotor(), carServiceIntersections,
-                carServices, pollutionDatabase));
+        executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new DieselMotor(), carServiceIntersections,
+                carServices, pollutionDatabase, flatTyreInformer));
+        executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new LemonadeMotor(), carServiceIntersections,
+                carServices, pollutionDatabase, flatTyreInformer));
     }
 }
