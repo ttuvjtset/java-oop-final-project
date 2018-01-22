@@ -24,6 +24,12 @@ public class Car implements Runnable {
     private double pollution;
     private boolean needToChangeAMotorAtService;
 
+    public Tyres getTyres() {
+        return tyres;
+    }
+
+    private Tyres tyres;
+
     Car(AtomicInteger id, Graph graph, Vertex startVertex, ArrayList<BadRoad> badRoads, Motor motor,
         ArrayList<Vertex> carServiceIntersections,
         ArrayList<CarService> carServices, PollutionDatabase pollutionDatabase, FlatTyreInformer flatTyreInformer) {
@@ -38,6 +44,7 @@ public class Car implements Runnable {
         this.flatTyreInformer = flatTyreInformer;
         this.pollution = 0;
         this.needToChangeAMotorAtService = false;
+        this.tyres = new Tyres();
     }
 
     public Motor getMotor() {
@@ -114,15 +121,28 @@ public class Car implements Runnable {
             }
 
             if (drivenThroughBadStreetCounter == 3) {
-                System.out.println("/////////////////////////");
+                System.out.println("///////// TYRES BROKEN /" + motor.getMotorType() + carID +  "///////////////");
+                tyres.setBrokenTyres();
                 try {
                     flatTyreInformer.informAndAddToList(this, drivingToIntersection);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
+                while(tyres.isBrokenTyres()) {
+                    try {
+                        System.out.println("///////// check if tyres are fixed /" + motor.getMotorType() + carID +  "///////////////");
+
+                        flatTyreInformer.checkIfTyresAreChanged();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                System.out.println("///////// tyres fixed /" + motor.getMotorType() + carID +  "///////////////");
+
                 //workaround
-                drivenThroughBadStreetCounter++;
+                drivenThroughBadStreetCounter=0;
             }
 
             intersectionCounter++;
@@ -181,6 +201,7 @@ public class Car implements Runnable {
 
     private void driveCarToNextRandomIntersectionFromThe(Vertex startVertex) {
         Optional<Vertex> getNextRandomVertex = getRandom(graph.getAdjVertices(startVertex));
+        //System.out.println("%%%%% DEBUG:" + graph.getAdjVertices(startVertex) + "FROM" + startVertex);
         getNextRandomVertex.ifPresent(vertex -> currentIntersection = vertex);
 
         try {

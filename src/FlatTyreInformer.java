@@ -24,9 +24,18 @@ public class FlatTyreInformer {
             carsWithFlatTyres.add(car);
             verticesWithCarsWithFlatTyres.add(drivingToIntersection);
             notifyAll();
+        }
+    }
+
+    public void checkIfTyresAreChanged() throws InterruptedException {
+        synchronized (this) {
             wait();
         }
     }
 
-
+    public void tyresWereChanged() throws InterruptedException {
+        synchronized (this) {
+            notifyAll();
+        }
+    }
 }

@@ -55,15 +55,20 @@ public class CarTyreExchanger implements Runnable {
 
     @Override
     public void run() {
+        driveCarToNextRandomIntersectionFromThe(startVertex);
+
         while (!Thread.interrupted()) {
             CarWithFlatTyres carWithFlatTyres = null;
             try {
-                System.out.println("FLAT TYRES again here");
+                System.out.println("FLAT TYRES EXCHANGER SEARCHING FOR AUTO....");
                 carWithFlatTyres = flatTyreInformer.getCarWithFlatTyres();
-                System.out.println("FLAT TYRES" + carWithFlatTyres);
+                System.out.println("FLAT TYRES EXCHANGER: CAR FOUND " + carWithFlatTyres.getVertexWhereCarIsWaitingForRepair() + " " + carWithFlatTyres.getCarWithFlatTyres());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+
+
 
 
         //first street driving
@@ -109,7 +114,6 @@ public class CarTyreExchanger implements Runnable {
 
             //driving to next intersection
             while (true) {
-                driveCarToNextRandomIntersectionFromThe(startVertex);
                 Vertex drivingFromIntersection = currentIntersection;
                 driveCarToNextRandomIntersectionFromThe(currentIntersection);
                 Vertex drivingToIntersection = currentIntersection;
@@ -117,8 +121,16 @@ public class CarTyreExchanger implements Runnable {
                 System.out.println("&&&&&& TO " + currentIntersection + " " + carWithFlatTyres.getVertexWhereCarIsWaitingForRepair());
                 if (currentIntersection.equals(carWithFlatTyres.getVertexWhereCarIsWaitingForRepair())){
                     System.out.println("We are here!!!!");
+//                    try {
+//                        Thread.sleep(1000000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                    carWithFlatTyres.getCarWithFlatTyres().getTyres().fixBrokenTyres();
                     try {
-                        Thread.sleep(1000000);
+                        flatTyreInformer.tyresWereChanged();
+                        System.out.println("&&&&&& Tyres changed");
+                        break;
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
