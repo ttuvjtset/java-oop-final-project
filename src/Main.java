@@ -65,5 +65,7 @@ public class Main {
                 carServices, pollutionDatabase, flatTyreInformer));
         executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new LemonadeMotor(), carServiceIntersections,
                 carServices, pollutionDatabase, flatTyreInformer));
+        executor.submit(new CarTyreExchanger(uniqueCarIDs, graph, vertex1, badRoads, new LemonadeMotor(), carServiceIntersections,
+                carServices, pollutionDatabase, flatTyreInformer));
     }
 }

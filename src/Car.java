@@ -114,7 +114,15 @@ public class Car implements Runnable {
             }
 
             if (drivenThroughBadStreetCounter == 3) {
-                flatTyreInformer.informAndAddToList(this, drivingToIntersection);
+                System.out.println("/////////////////////////");
+                try {
+                    flatTyreInformer.informAndAddToList(this, drivingToIntersection);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                //workaround
+                drivenThroughBadStreetCounter++;
             }
 
             intersectionCounter++;
