@@ -120,7 +120,7 @@ public class Car implements Runnable {
                         + drivenThroughBadStreetCounter);
             }
 
-            if (drivenThroughBadStreetCounter == 3) {
+            if (drivenThroughBadStreetCounter == 3 && !(tyres instanceof FruitPasteTyres)) {
                 System.out.println("///////// TYRES BROKEN /" + motor.getMotorType() + carID +  "///////////////");
                 tyres.setBrokenTyres();
                 try {
@@ -212,6 +212,10 @@ public class Car implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void changeTyres(Tyres newTyres) {
+        tyres = newTyres;
     }
 
     private int getStreetDriveTime() {

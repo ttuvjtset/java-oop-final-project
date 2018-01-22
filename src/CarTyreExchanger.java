@@ -1,6 +1,8 @@
 import inspection.PollutionDatabase;
 import map.Graph;
 import map.Vertex;
+import motors.ElectricMotor;
+import motors.LemonadeMotor;
 import motors.Motor;
 
 import java.util.ArrayList;
@@ -60,100 +62,46 @@ public class CarTyreExchanger implements Runnable {
         while (!Thread.interrupted()) {
             CarWithFlatTyres carWithFlatTyres = null;
             try {
-                System.out.println("FLAT TYRES EXCHANGER SEARCHING FOR AUTO....");
+                System.out.println("~~~~ FLAT TYRES EXCHANGER SEARCHING FOR AUTO....");
                 carWithFlatTyres = flatTyreInformer.getCarWithFlatTyres();
-                System.out.println("FLAT TYRES EXCHANGER: CAR FOUND " + carWithFlatTyres.getVertexWhereCarIsWaitingForRepair() + " " + carWithFlatTyres.getCarWithFlatTyres());
+                System.out.println("~~~~ FLAT TYRES EXCHANGER: CAR FOUND " + carWithFlatTyres.getVertexWhereCarIsWaitingForRepair()
+                        + " " + carWithFlatTyres.getCarWithFlatTyres()
+                        + "; we are at " + currentIntersection);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-
-
-
-
-        //first street driving
-        //pollutionDatabase.firstCarRegistration(motor);
-
-
-
-        //intersection
-        //int intersectionCounter = 1;
-        //int waitingTimesBecauseOfNonEcoFriendlyMotor = 0;
-        //int drivenThroughBadStreetCounter = 0;
-
-
-//            if (intersectionCounter % 5 == 0) {
-//                pollutionDatabase.addPollutionAmount(motor, pollution);
-//                pollution = 0;
-//            }
-//
-//            if (intersectionCounter % 7 == 0) {
-//                try {
-//                    System.out.println(motor.getMotorType() + carID + "Asking permission to continue driving");
-//                    boolean furtherDrivingBlockedBecauseOfMotor = pollutionDatabase.
-//                            isFurtherDrivingCurrentlyBlocked(motor);
-//
-//                    if (furtherDrivingBlockedBecauseOfMotor) {
-//                        waitingTimesBecauseOfNonEcoFriendlyMotor++;
-//                        System.out.println(">>> Waiting Times Because Of Motor Counter: " + motor.getMotorType()
-//                                + carID + " " + waitingTimesBecauseOfNonEcoFriendlyMotor);
-//
-//                        if (carOwnerDecidesToChangeMotorToEcoFriendly(waitingTimesBecauseOfNonEcoFriendlyMotor)) {
-//                            needToChangeAMotorAtService = true;
-//                            System.out.println(motor.getMotorType() + carID + " !!!!!!!!!!!!! decided to change Motor");
-//                        }
-//                    }
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-
-//            if (currentIntersectionIsACarService()) {
-//                doCarService();
-//            }
-
-            //driving to next intersection
             while (true) {
-                Vertex drivingFromIntersection = currentIntersection;
+                if (checkIfRightIntersectionAndFixTyres(carWithFlatTyres)) break;
+
                 driveCarToNextRandomIntersectionFromThe(currentIntersection);
-                Vertex drivingToIntersection = currentIntersection;
 
-                System.out.println("&&&&&& TO " + currentIntersection + " " + carWithFlatTyres.getVertexWhereCarIsWaitingForRepair());
-                if (currentIntersection.equals(carWithFlatTyres.getVertexWhereCarIsWaitingForRepair())){
-                    System.out.println("We are here!!!!");
-//                    try {
-//                        Thread.sleep(1000000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-                    carWithFlatTyres.getCarWithFlatTyres().getTyres().fixBrokenTyres();
-                    try {
-                        flatTyreInformer.tyresWereChanged();
-                        System.out.println("&&&&&& Tyres changed");
-                        break;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                System.out.println("~~~~ DRIVING TO " + currentIntersection + "; Car is at "
+                        + carWithFlatTyres.getVertexWhereCarIsWaitingForRepair());
+            }
+        }
+    }
 
-                }
+    private boolean checkIfRightIntersectionAndFixTyres(CarWithFlatTyres carWithFlatTyres) {
+        if (currentIntersection.equals(carWithFlatTyres.getVertexWhereCarIsWaitingForRepair())){
+            System.out.println("~~~~~ We are here!!!! at " + currentIntersection);
+
+            if (carWithFlatTyres.getCarWithFlatTyres().getMotor() instanceof ElectricMotor ||
+                    carWithFlatTyres.getCarWithFlatTyres().getMotor() instanceof LemonadeMotor) {
+                System.out.println("/!/!/! change tyres /!/!/!");
+                carWithFlatTyres.getCarWithFlatTyres().changeTyres(new FruitPasteTyres());
+            }
+            carWithFlatTyres.getCarWithFlatTyres().getTyres().fixBrokenTyres();
+            try {
+                flatTyreInformer.tyresWereChanged();
+                System.out.println("&&&&&& Tyres changed");
+                return true;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
-//            Optional<BadRoad> wasTheStreetBad = badRoads.stream()
-//                    .filter(wasCurrentStreetBad(drivingFromIntersection, drivingToIntersection))
-//                    .findAny();
-//
-//            if (wasTheStreetBad.isPresent()) {
-//                drivenThroughBadStreetCounter++;
-//                System.out.println(motor.getMotorType() + carID + "Bad street!!!!! Counter: "
-//                        + drivenThroughBadStreetCounter);
-//            }
-//
-//            if (drivenThroughBadStreetCounter == 3) {
-//                flatTyreInformer.informAndAddToList(this, drivingToIntersection);
-//            }
-//
-//            intersectionCounter++;
         }
+        return false;
     }
 
 //    private Predicate<BadRoad> wasCurrentStreetBad(Vertex drivingFromIntersection, Vertex drivingToIntersection) {

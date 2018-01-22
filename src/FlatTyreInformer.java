@@ -20,7 +20,7 @@ public class FlatTyreInformer {
 
     public void informAndAddToList(Car car, Vertex drivingToIntersection) throws InterruptedException {
         synchronized (this) {
-            System.out.println("add");
+            System.out.println("Added car " + car + " at " + drivingToIntersection + "BROKEN TYRES");
             carsWithFlatTyres.add(car);
             verticesWithCarsWithFlatTyres.add(drivingToIntersection);
             notifyAll();
