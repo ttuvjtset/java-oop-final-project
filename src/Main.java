@@ -58,6 +58,7 @@ public class Main {
 
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
+        executor.submit(new Bird(pollutionDatabase));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForBenzine));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForDiesel));
         executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new BenzineMotor(), carServiceIntersections,

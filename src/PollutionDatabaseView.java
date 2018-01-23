@@ -11,15 +11,15 @@ public class PollutionDatabaseView {
     String getJSON(PollutionDatabase pollutionDatabase) {
         updateDataFromDatabase(pollutionDatabase);
 
-        double ecoMotorsPercentage = ((((double) electricCars + (double) lemonadeCars)
-                / ((double) benzineCars + (double) dieselCars + (double) electricCars + (double) lemonadeCars)) * 100);
+        double ecoMotorsPercentage = (((double) electricCars + (double) lemonadeCars)
+                / ((double) benzineCars + (double) dieselCars + (double) electricCars + (double) lemonadeCars)) * 100;
 
         return "{\n" +
-                "benzineCars: " + benzineCars + "\n" +
-                "dieselCars: " + dieselCars + "\n" +
-                "electricCars: " + electricCars + "\n" +
-                "lemonadeCars: " + lemonadeCars + "\n" +
-                "ecoMotorsPercentage: " + ecoMotorsPercentage + "\n" +
+                "     benzineCars: " + benzineCars + "\n" +
+                "     dieselCars: " + dieselCars + "\n" +
+                "     electricCars: " + electricCars + "\n" +
+                "     lemonadeCars: " + lemonadeCars + "\n" +
+                "     ecoMotorsPercentage: " + ecoMotorsPercentage + "\n" +
                 "}";
     }
 
@@ -42,6 +42,5 @@ public class PollutionDatabaseView {
         electricCars = pollutionDatabase.filterMotorsByCondition(motor -> motor instanceof BenzineMotor).count();
         lemonadeCars = pollutionDatabase.filterMotorsByCondition(motor -> motor instanceof BenzineMotor).count();
     }
-
 
 }
