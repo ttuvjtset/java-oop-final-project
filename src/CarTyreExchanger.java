@@ -40,9 +40,10 @@ public class CarTyreExchanger implements Runnable {
                 Optional<CarWithFlatTyres> carWithFlatTyres = Optional.of(flatTyreInformer.getCarWithFlatTyres());
 
                 if (carWithFlatTyres.isPresent()) {
-                    System.out.println(">>> TYRE EXCHANGER CAR >>> car found "
+                    System.out.println(">>> TYRE EXCHANGER CAR >>> car "
+                            + carWithFlatTyres.get().getCarWithFlatTyres().getCarMotorTypeAndID()
+                            + " found at "
                             + carWithFlatTyres.get().getVertexWhereCarIsWaitingForRepair()
-                            + " " + carWithFlatTyres.get().getCarWithFlatTyres()
                             + "; we are at " + currentIntersection);
 
                     while (true) {

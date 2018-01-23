@@ -18,6 +18,8 @@ public class PollutionDatabase {
     private ArrayList<Motor> motors;
     private DoubleAdder totalPollutionAmount;
     private DrivingRestrictionTable drivingRestrictionTable;
+
+
     public PollutionDatabase(DrivingRestrictionTable drivingRestrictionTable) {
         this.drivingRestrictionTable = drivingRestrictionTable;
         this.motors = new ArrayList<>();
@@ -73,25 +75,27 @@ public class PollutionDatabase {
         return totalPollutionAmount.doubleValue() < restriction.getPollutionRestriction();
     }
 
-    public boolean isFurtherDrivingCurrentlyBlocked(Motor motor) throws InterruptedException {
+    public boolean wasFurtherDrivingCurrentlyBlocked(Motor motor) throws InterruptedException {
         synchronized (this) {
-            boolean furtherDrivingBlocked = false;
+            boolean furtherDrivingWasBlocked = false;
 
             if (motor instanceof BenzineMotor) {
                 while (drivingRestrictionTable.isBlockedForBenzine()) {
+                    System.out.println("     POLLUTION DATABASE: DRIVING IS BLOCKED FOR BENZINE!!");
                     wait();
-                    furtherDrivingBlocked = true;
+                    furtherDrivingWasBlocked = true;
                 }
             }
 
             if (motor instanceof DieselMotor) {
                 while (drivingRestrictionTable.isBlockedForDiesel()) {
+                    System.out.println("     POLLUTION DATABASE: DRIVING IS BLOCKED FOR DIESEL!!");
                     wait();
-                    furtherDrivingBlocked = true;
+                    furtherDrivingWasBlocked = true;
                 }
             }
 
-            return furtherDrivingBlocked;
+            return furtherDrivingWasBlocked;
         }
     }
 
