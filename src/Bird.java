@@ -3,11 +3,11 @@ import inspection.PollutionDatabase;
 
 public class Bird implements Runnable {
 
-
+    private PollutionDatabaseView pollutionDatabaseView;
     private PollutionDatabase pollutionDatabase;
 
-    public Bird(PollutionDatabase pollutionDatabase) {
-
+    public Bird(PollutionDatabaseView pollutionDatabaseView, PollutionDatabase pollutionDatabase) {
+        this.pollutionDatabaseView = pollutionDatabaseView;
         this.pollutionDatabase = pollutionDatabase;
     }
 
@@ -25,6 +25,8 @@ public class Bird implements Runnable {
             } else {
                 System.out.println("BIRD: Inimene tark, inimene tark - saastet täis on linnapark");
             }
+
+            System.out.println(pollutionDatabaseView.getJSON(pollutionDatabase));
         }
     }
 }

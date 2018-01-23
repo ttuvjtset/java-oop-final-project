@@ -58,18 +58,19 @@ public class Main {
 
 
         ExecutorService executor = Executors.newFixedThreadPool(210);
-        executor.submit(new Bird(pollutionDatabase));
+        executor.submit(new Bird(pollutionDatabaseView, pollutionDatabase));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForBenzine));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForDiesel));
 
-        for (int carsCount = 0; carsCount < 1; carsCount++) {
+        Thread.sleep(100);
+        for (int carsCount = 0; carsCount < 90; carsCount++) {
             executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new BenzineMotor(), carServiceIntersections,
                     carServices, pollutionDatabase, flatTyreInformer));
             executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new DieselMotor(), carServiceIntersections,
                     carServices, pollutionDatabase, flatTyreInformer));
         }
 
-        for (int carsCount = 0; carsCount < 1; carsCount++) {
+        for (int carsCount = 0; carsCount < 10; carsCount++) {
             executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new LemonadeMotor(), carServiceIntersections,
                     carServices, pollutionDatabase, flatTyreInformer));
             executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new ElectricMotor(), carServiceIntersections,
@@ -77,8 +78,5 @@ public class Main {
         }
 
         executor.submit(new CarTyreExchanger(graph, vertex1, flatTyreInformer));
-
-
-        System.out.println(pollutionDatabaseView.getJSON(pollutionDatabase));
     }
 }

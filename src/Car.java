@@ -90,7 +90,7 @@ public class Car implements Runnable {
                     if (furtherDrivingBlockedBecauseOfMotor) {
                         waitingTimesBecauseOfNonEcoFriendlyMotor++;
                         System.out.println(getCarMotorTypeAndID() + " waiting times because of non eco motor counter: " +
-                                +waitingTimesBecauseOfNonEcoFriendlyMotor);
+                                + waitingTimesBecauseOfNonEcoFriendlyMotor);
 
                         if (carOwnerDecidesToChangeMotorToEcoFriendly(waitingTimesBecauseOfNonEcoFriendlyMotor)) {
                             needToChangeAMotorAtService = true;
@@ -184,7 +184,7 @@ public class Car implements Runnable {
         }
 
         if (needToChangeAMotorAtService) {
-            carService.changeMotorAndReregister();
+            carService.changeMotorAndReregister(this);
             needToChangeAMotorAtService = false;
             System.out.println(getCarMotorTypeAndID() + " $$$ Motor changed $$$");
         }

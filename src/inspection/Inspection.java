@@ -19,6 +19,8 @@ public class Inspection implements Runnable {
 
     @Override
     public void run() {
+        int counter = 1;
+
         while (!Thread.interrupted()) {
             double pollutionAmountAfterReset = 0;
 
@@ -36,7 +38,7 @@ public class Inspection implements Runnable {
             }
 
             try {
-                System.out.println("........" + restriction.getPollutionRestriction() + ".BLOCK......................" +
+                System.out.println("........" + restriction.getPollutionRestriction() + ".BLOCK" + counter + "......................" +
                         ".........Waiting 5000 ms..............");
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
@@ -53,9 +55,10 @@ public class Inspection implements Runnable {
             pollutionDatabase.resetPollutionCounter(pollutionAmountAfterReset);
             pollutionDatabase.informAboutReleasedRestrictions();
 
-            System.out.println("........" + restriction.getPollutionRestriction() + ".UNBLOCK........................" +
+            System.out.println("........" + restriction.getPollutionRestriction() + ".UNBLOCK" + counter + "........................" +
                     "..................UNBLOCKED..............");
 
+            counter++;
         }
     }
 }

@@ -8,7 +8,7 @@ import java.util.concurrent.BlockingQueue;
 
 class CarService {
     private BlockingQueue<Car> queue;
-    private Car car;
+    //private Car carInTheService;
     private PollutionDatabase pollutionDatabase;
 
     CarService(PollutionDatabase pollutionDatabase) {
@@ -17,21 +17,25 @@ class CarService {
     }
 
     void addCar(Car car) throws InterruptedException {
-        this.car = car;
+        //this.carInTheService = car;
         System.out.println("$$$ entering queue " + car.getCarMotorTypeAndID() + "$$$");
         queue.put(car);
     }
 
     void removeCar() throws InterruptedException {
-        queue.take();
+        //if (carInTheService.equals(car)) {
+            queue.take();
+        //}
     }
 
-    void changeMotorAndReregister() {
-        pollutionDatabase.removeMotor(car.getMotor());
+    void changeMotorAndReregister(Car car) {
+        System.out.println(queue.contains(car));
+        if (queue.contains(car)) {
+            pollutionDatabase.removeMotor(car.getMotor());
 
-        Motor newEcoFriendlyMotor = new LemonadeMotor();
-        car.changeMotor(newEcoFriendlyMotor);
-        pollutionDatabase.firstCarRegistration(newEcoFriendlyMotor);
+            Motor newEcoFriendlyMotor = new LemonadeMotor();
+            car.changeMotor(newEcoFriendlyMotor);
+            pollutionDatabase.firstCarRegistration(newEcoFriendlyMotor);
+        }
     }
-
 }

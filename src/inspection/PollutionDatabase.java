@@ -81,7 +81,6 @@ public class PollutionDatabase {
 
             if (motor instanceof BenzineMotor) {
                 while (drivingRestrictionTable.isBlockedForBenzine()) {
-                    System.out.println("     POLLUTION DATABASE: DRIVING IS BLOCKED FOR BENZINE!!");
                     wait();
                     furtherDrivingWasBlocked = true;
                 }
@@ -89,7 +88,6 @@ public class PollutionDatabase {
 
             if (motor instanceof DieselMotor) {
                 while (drivingRestrictionTable.isBlockedForDiesel()) {
-                    System.out.println("     POLLUTION DATABASE: DRIVING IS BLOCKED FOR DIESEL!!");
                     wait();
                     furtherDrivingWasBlocked = true;
                 }

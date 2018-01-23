@@ -1,5 +1,8 @@
 import inspection.PollutionDatabase;
 import motors.BenzineMotor;
+import motors.DieselMotor;
+import motors.ElectricMotor;
+import motors.LemonadeMotor;
 
 
 public class PollutionDatabaseView {
@@ -38,9 +41,9 @@ public class PollutionDatabaseView {
 
     private void updateDataFromDatabase(PollutionDatabase pollutionDatabase) {
         benzineCars = pollutionDatabase.filterMotorsByCondition(motor -> motor instanceof BenzineMotor).count();
-        dieselCars = pollutionDatabase.filterMotorsByCondition(motor -> motor instanceof BenzineMotor).count();
-        electricCars = pollutionDatabase.filterMotorsByCondition(motor -> motor instanceof BenzineMotor).count();
-        lemonadeCars = pollutionDatabase.filterMotorsByCondition(motor -> motor instanceof BenzineMotor).count();
+        dieselCars = pollutionDatabase.filterMotorsByCondition(motor -> motor instanceof DieselMotor).count();
+        electricCars = pollutionDatabase.filterMotorsByCondition(motor -> motor instanceof ElectricMotor).count();
+        lemonadeCars = pollutionDatabase.filterMotorsByCondition(motor -> motor instanceof LemonadeMotor).count();
     }
 
 }
