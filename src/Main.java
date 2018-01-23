@@ -4,6 +4,7 @@ import map.Graph;
 import map.Vertex;
 import motors.BenzineMotor;
 import motors.DieselMotor;
+import motors.ElectricMotor;
 import motors.LemonadeMotor;
 import restrictions.DrivingRestrictionTable;
 import restrictions.Restriction;
@@ -53,6 +54,8 @@ public class Main {
         BadRoad badRoad = new BadRoad(vertex2, vertex3);
         ArrayList<BadRoad> badRoads = new ArrayList<>(Collections.singletonList(badRoad));
 
+        PollutionDatabaseView pollutionDatabaseView = new PollutionDatabaseView();
+
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForBenzine));
@@ -60,12 +63,16 @@ public class Main {
         executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new BenzineMotor(), carServiceIntersections,
                 carServices, pollutionDatabase, flatTyreInformer));
 
+        System.out.println(pollutionDatabaseView.getJSON(pollutionDatabase));
+
         Thread.sleep(2000);
+
+        System.out.println(pollutionDatabaseView.getJSON(pollutionDatabase));
+
         executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new DieselMotor(), carServiceIntersections,
                 carServices, pollutionDatabase, flatTyreInformer));
         executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new LemonadeMotor(), carServiceIntersections,
                 carServices, pollutionDatabase, flatTyreInformer));
-        executor.submit(new CarTyreExchanger(uniqueCarIDs, graph, vertex1, badRoads, new LemonadeMotor(), carServiceIntersections,
-                carServices, pollutionDatabase, flatTyreInformer));
+        executor.submit(new CarTyreExchanger(uniqueCarIDs, graph, vertex1, new ElectricMotor(), flatTyreInformer));
     }
 }

@@ -33,6 +33,7 @@ class CarService {
 
     void changeMotorAndReregister() {
         pollutionDatabase.removeMotor(car.getMotor());
+
         Motor newEcoFriendlyMotor = new LemonadeMotor();
         car.changeMotor(newEcoFriendlyMotor);
         pollutionDatabase.firstCarRegistration(newEcoFriendlyMotor);

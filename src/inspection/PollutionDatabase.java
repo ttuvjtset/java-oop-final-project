@@ -10,6 +10,8 @@ import restrictions.RestrictionForDiesel;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.DoubleAdder;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 
 public class PollutionDatabase {
@@ -101,6 +103,10 @@ public class PollutionDatabase {
             totalPollutionAmount.reset();
             totalPollutionAmount.add(pollutionAmountAfterReset);
         }
+    }
+
+    public Stream<Motor> filterMotorsByCondition(Predicate<? super Motor> motorCondition) {
+        return motors.stream().filter(motorCondition);
     }
 
 }

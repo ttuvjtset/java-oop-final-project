@@ -1,16 +1,16 @@
-/**
- * Created by root on 22.01.2018.
- */
+package tyres;
+
+
 public class FruitPasteTyres extends Tyres {
+    private volatile boolean brokenTyres = false;
+
     @Override
     public boolean isBrokenTyres() {
         return false;
     }
 
     @Override
-    public void setBrokenTyres(){
+    public void setBrokenTyres() {
         this.brokenTyres = false;
     }
-
-    volatile boolean brokenTyres = false;
 }

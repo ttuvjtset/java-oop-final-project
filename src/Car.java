@@ -2,6 +2,8 @@ import inspection.PollutionDatabase;
 import map.Graph;
 import map.Vertex;
 import motors.Motor;
+import tyres.FruitPasteTyres;
+import tyres.Tyres;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,11 +25,6 @@ public class Car implements Runnable {
     private Vertex currentIntersection;
     private double pollution;
     private boolean needToChangeAMotorAtService;
-
-    public Tyres getTyres() {
-        return tyres;
-    }
-
     private Tyres tyres;
 
     Car(AtomicInteger id, Graph graph, Vertex startVertex, ArrayList<BadRoad> badRoads, Motor motor,
@@ -45,6 +42,10 @@ public class Car implements Runnable {
         this.pollution = 0;
         this.needToChangeAMotorAtService = false;
         this.tyres = new Tyres();
+    }
+
+    public Tyres getTyres() {
+        return tyres;
     }
 
     public Motor getMotor() {
@@ -121,7 +122,7 @@ public class Car implements Runnable {
             }
 
             if (drivenThroughBadStreetCounter == 3 && !(tyres instanceof FruitPasteTyres)) {
-                System.out.println("///////// TYRES BROKEN /" + motor.getMotorType() + carID +  "///////////////");
+                System.out.println("///////// TYRES BROKEN /" + motor.getMotorType() + carID + "///////////////");
                 tyres.setBrokenTyres();
                 try {
                     flatTyreInformer.informAndAddToList(this, drivingToIntersection);
@@ -129,9 +130,9 @@ public class Car implements Runnable {
                     e.printStackTrace();
                 }
 
-                while(tyres.isBrokenTyres()) {
+                while (tyres.isBrokenTyres()) {
                     try {
-                        System.out.println("///////// check if tyres are fixed /" + motor.getMotorType() + carID +  "///////////////");
+                        System.out.println("///////// check if tyres are fixed /" + motor.getMotorType() + carID + "///////////////");
 
                         flatTyreInformer.checkIfTyresAreChanged();
                     } catch (InterruptedException e) {
@@ -139,10 +140,10 @@ public class Car implements Runnable {
                     }
                 }
 
-                System.out.println("///////// tyres fixed /" + motor.getMotorType() + carID +  "///////////////");
+                System.out.println("///////// tyres fixed /" + motor.getMotorType() + carID + "///////////////");
 
                 //workaround
-                drivenThroughBadStreetCounter=0;
+                drivenThroughBadStreetCounter = 0;
             }
 
             intersectionCounter++;
