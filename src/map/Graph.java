@@ -4,6 +4,11 @@ package map;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Code taken from:
+ * https://gist.github.com/smddzcy/bf8fc17dedf4d40b0a873fc44f855a58
+ * smddzcy
+ */
 public class Graph {
     private Set<Vertex> vertices;
     private Set<Edge> edges;
