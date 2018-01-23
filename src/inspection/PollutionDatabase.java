@@ -16,18 +16,16 @@ import java.util.stream.Stream;
 
 public class PollutionDatabase {
     private ArrayList<Motor> motors;
-
-    public DoubleAdder getTotalPollutionAmount() {
-        return totalPollutionAmount;
-    }
-
     private DoubleAdder totalPollutionAmount;
     private DrivingRestrictionTable drivingRestrictionTable;
-
     public PollutionDatabase(DrivingRestrictionTable drivingRestrictionTable) {
         this.drivingRestrictionTable = drivingRestrictionTable;
         this.motors = new ArrayList<>();
         this.totalPollutionAmount = new DoubleAdder();
+    }
+
+    public DoubleAdder getTotalPollutionAmount() {
+        return totalPollutionAmount;
     }
 
     public void removeMotor(Motor motor) {

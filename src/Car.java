@@ -83,18 +83,18 @@ public class Car implements Runnable {
 
             if (intersectionCounter % 7 == 0) {
                 try {
-                    System.out.println(motor.getMotorType() + carID + "Asking permission to continue driving");
+                    System.out.println(getCarMotorTypeAndID() + " asking permission to continue driving");
                     boolean furtherDrivingBlockedBecauseOfMotor = pollutionDatabase.
                             isFurtherDrivingCurrentlyBlocked(motor);
 
                     if (furtherDrivingBlockedBecauseOfMotor) {
                         waitingTimesBecauseOfNonEcoFriendlyMotor++;
-                        System.out.println(">>> Waiting Times Because Of Motor Counter: " + motor.getMotorType()
-                                + carID + " " + waitingTimesBecauseOfNonEcoFriendlyMotor);
+                        System.out.println(getCarMotorTypeAndID() + " waiting times because of non eco motor counter: " +
+                                +waitingTimesBecauseOfNonEcoFriendlyMotor);
 
                         if (carOwnerDecidesToChangeMotorToEcoFriendly(waitingTimesBecauseOfNonEcoFriendlyMotor)) {
                             needToChangeAMotorAtService = true;
-                            System.out.println(motor.getMotorType() + carID + " !!!!!!!!!!!!! decided to change Motor");
+                            System.out.println("!!!! " + getCarMotorTypeAndID() + " decided to change Motor !!!!");
                         }
                     }
                 } catch (InterruptedException e) {
@@ -117,12 +117,12 @@ public class Car implements Runnable {
 
             if (wasTheStreetBad.isPresent()) {
                 drivenThroughBadStreetCounter++;
-                System.out.println(motor.getMotorType() + carID + "Bad street!!!!! Counter: "
+                System.out.println(getCarMotorTypeAndID() + " Bad street Counter: "
                         + drivenThroughBadStreetCounter);
             }
 
             if (drivenThroughBadStreetCounter == 3 && !(tyres instanceof FruitPasteTyres)) {
-                System.out.println("///////// TYRES BROKEN /" + motor.getMotorType() + carID + "///////////////");
+                System.out.println(getCarMotorTypeAndID() + " !!!! TYRES BROKEN !!!!");
                 tyres.setBrokenTyres();
                 try {
                     flatTyreInformer.informAndAddToList(this, drivingToIntersection);
@@ -132,15 +132,13 @@ public class Car implements Runnable {
 
                 while (tyres.isBrokenTyres()) {
                     try {
-                        System.out.println("///////// check if tyres are fixed /" + motor.getMotorType() + carID + "///////////////");
-
                         flatTyreInformer.checkIfTyresAreChanged();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
 
-                System.out.println("///////// tyres fixed /" + motor.getMotorType() + carID + "///////////////");
+                System.out.println(getCarMotorTypeAndID() + " !!!! TYRES FIXED !!!!");
 
                 //workaround
                 drivenThroughBadStreetCounter = 0;
@@ -148,6 +146,10 @@ public class Car implements Runnable {
 
             intersectionCounter++;
         }
+    }
+
+    public String getCarMotorTypeAndID() {
+        return motor.getMotorType() + carID;
     }
 
     private Predicate<BadRoad> wasCurrentStreetBad(Vertex drivingFromIntersection, Vertex drivingToIntersection) {
@@ -173,7 +175,7 @@ public class Car implements Runnable {
             e.printStackTrace();
         }
 
-        System.out.println("$$$ Beginning service works for " + motor.getMotorType() + carID + " $$$");
+        System.out.println(getCarMotorTypeAndID() + " $$$ Beginning service $$$");
 
         try {
             Thread.sleep(50);
@@ -184,10 +186,10 @@ public class Car implements Runnable {
         if (needToChangeAMotorAtService) {
             carService.changeMotorAndReregister();
             needToChangeAMotorAtService = false;
-            System.out.println("MOTOR CHANGED!!");
+            System.out.println(getCarMotorTypeAndID() + " $$$ Motor changed $$$");
         }
 
-        System.out.println("$$$ End of service works for + " + motor.getMotorType() + carID + " $$$");
+        System.out.println(getCarMotorTypeAndID() + " $$$ End of service $$$");
 
         try {
             carService.removeCar();
@@ -206,7 +208,7 @@ public class Car implements Runnable {
         getNextRandomVertex.ifPresent(vertex -> currentIntersection = vertex);
 
         try {
-            System.out.println(motor.getMotorType() + carID + " Riding from " + startVertex + " to " + currentIntersection);
+            System.out.println(getCarMotorTypeAndID() + " Driving: " + startVertex + " -> " + currentIntersection);
             Thread.sleep(getStreetDriveTime());
             pollution += motor.getPollutionRatio();
 

@@ -2,34 +2,23 @@ import map.Graph;
 import map.Vertex;
 import motors.ElectricMotor;
 import motors.LemonadeMotor;
-import motors.Motor;
 import tyres.FruitPasteTyres;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CarTyreExchanger implements Runnable {
-    private String carID;
+
     private Graph graph;
     private Vertex startVertex;
-
-    private Motor motor;
-
     private FlatTyreInformer flatTyreInformer;
     private Vertex currentIntersection;
 
-
-    CarTyreExchanger(AtomicInteger id, Graph graph, Vertex startVertex, Motor motor, FlatTyreInformer flatTyreInformer) {
-        this.carID = String.valueOf(id.getAndIncrement());
+    public CarTyreExchanger(Graph graph, Vertex startVertex, FlatTyreInformer flatTyreInformer) {
         this.graph = graph;
         this.startVertex = startVertex;
-
-        this.motor = motor;
-
         this.flatTyreInformer = flatTyreInformer;
-
     }
 
     private Optional<Vertex> getRandom(Collection<Vertex> adjVertices) {
@@ -43,41 +32,50 @@ public class CarTyreExchanger implements Runnable {
         driveCarToNextRandomIntersectionFromThe(startVertex);
 
         while (!Thread.interrupted()) {
-            CarWithFlatTyres carWithFlatTyres = null;
+
             try {
-                System.out.println("~~~~ FLAT TYRES EXCHANGER SEARCHING FOR AUTO....");
-                carWithFlatTyres = flatTyreInformer.getCarWithFlatTyres();
-                System.out.println("~~~~ FLAT TYRES EXCHANGER: CAR FOUND " + carWithFlatTyres.getVertexWhereCarIsWaitingForRepair()
-                        + " " + carWithFlatTyres.getCarWithFlatTyres()
-                        + "; we are at " + currentIntersection);
+                System.out.println(">>> TYRE EXCHANGER CAR >>> waiting for car with flat tyres at " +
+                        currentIntersection);
+
+                Optional<CarWithFlatTyres> carWithFlatTyres = Optional.of(flatTyreInformer.getCarWithFlatTyres());
+
+                if (carWithFlatTyres.isPresent()) {
+                    System.out.println(">>> TYRE EXCHANGER CAR >>> car found "
+                            + carWithFlatTyres.get().getVertexWhereCarIsWaitingForRepair()
+                            + " " + carWithFlatTyres.get().getCarWithFlatTyres()
+                            + "; we are at " + currentIntersection);
+
+                    while (true) {
+                        if (checkIfRightIntersectionAndFixTyres(carWithFlatTyres.get())) break;
+
+                        driveCarToNextRandomIntersectionFromThe(currentIntersection);
+
+                        System.out.println(">>> TYRE EXCHANGER CAR >>> currently at " + currentIntersection + "; " +
+                                "Car with flat tyres is at "
+                                + carWithFlatTyres.get().getVertexWhereCarIsWaitingForRepair());
+                    }
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
-
-            while (true) {
-                if (checkIfRightIntersectionAndFixTyres(carWithFlatTyres)) break;
-
-                driveCarToNextRandomIntersectionFromThe(currentIntersection);
-
-                System.out.println("~~~~ DRIVING TO " + currentIntersection + "; Car is at "
-                        + carWithFlatTyres.getVertexWhereCarIsWaitingForRepair());
             }
         }
     }
 
     private boolean checkIfRightIntersectionAndFixTyres(CarWithFlatTyres carWithFlatTyres) {
         if (currentIntersection.equals(carWithFlatTyres.getVertexWhereCarIsWaitingForRepair())) {
-            System.out.println("~~~~~ We are here!!!! at " + currentIntersection);
+            System.out.println(">>> TYRE EXCHANGER CAR >>> is on place at " + currentIntersection);
 
             if (carWithFlatTyres.getCarWithFlatTyres().getMotor() instanceof ElectricMotor ||
                     carWithFlatTyres.getCarWithFlatTyres().getMotor() instanceof LemonadeMotor) {
-                System.out.println("/!/!/! change tyres /!/!/!");
+                System.out.println(">>> TYRE EXCHANGER CAR >>> installing FruitPasteTyres for eco friendly car");
                 carWithFlatTyres.getCarWithFlatTyres().changeTyres(new FruitPasteTyres());
             }
+
             carWithFlatTyres.getCarWithFlatTyres().getTyres().fixBrokenTyres();
+
             try {
                 flatTyreInformer.tyresWereChanged();
-                System.out.println("&&&&&& tyres.Tyres changed");
+                System.out.println(">>> TYRE EXCHANGER CAR >>> tyres changed");
                 return true;
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -92,7 +90,7 @@ public class CarTyreExchanger implements Runnable {
         getNextRandomVertex.ifPresent(vertex -> currentIntersection = vertex);
 
         try {
-            System.out.println(motor.getMotorType() + carID + " >>>>>>>>> Riding from " + startVertex + " to " + currentIntersection);
+            System.out.println(">>> TYRE EXCHANGER CAR >>> driving : " + startVertex + " -> " + currentIntersection);
             Thread.sleep(getStreetDriveTime());
 
         } catch (InterruptedException e) {

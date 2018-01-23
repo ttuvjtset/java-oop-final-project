@@ -57,23 +57,28 @@ public class Main {
         PollutionDatabaseView pollutionDatabaseView = new PollutionDatabaseView();
 
 
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+        ExecutorService executor = Executors.newFixedThreadPool(210);
         executor.submit(new Bird(pollutionDatabase));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForBenzine));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForDiesel));
-        executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new BenzineMotor(), carServiceIntersections,
-                carServices, pollutionDatabase, flatTyreInformer));
+
+        for (int carsCount = 0; carsCount < 1; carsCount++) {
+            executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new BenzineMotor(), carServiceIntersections,
+                    carServices, pollutionDatabase, flatTyreInformer));
+            executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new DieselMotor(), carServiceIntersections,
+                    carServices, pollutionDatabase, flatTyreInformer));
+        }
+
+        for (int carsCount = 0; carsCount < 1; carsCount++) {
+            executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new LemonadeMotor(), carServiceIntersections,
+                    carServices, pollutionDatabase, flatTyreInformer));
+            executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new ElectricMotor(), carServiceIntersections,
+                    carServices, pollutionDatabase, flatTyreInformer));
+        }
+
+        executor.submit(new CarTyreExchanger(graph, vertex1, flatTyreInformer));
+
 
         System.out.println(pollutionDatabaseView.getJSON(pollutionDatabase));
-
-        Thread.sleep(2000);
-
-        System.out.println(pollutionDatabaseView.getJSON(pollutionDatabase));
-
-        executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new DieselMotor(), carServiceIntersections,
-                carServices, pollutionDatabase, flatTyreInformer));
-        executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new LemonadeMotor(), carServiceIntersections,
-                carServices, pollutionDatabase, flatTyreInformer));
-        executor.submit(new CarTyreExchanger(uniqueCarIDs, graph, vertex1, new ElectricMotor(), flatTyreInformer));
     }
 }
