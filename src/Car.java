@@ -27,7 +27,7 @@ public class Car implements Runnable {
     private boolean needToChangeAMotorAtService;
     private Tyres tyres;
 
-    Car(AtomicInteger id, Graph graph, Vertex startVertex, ArrayList<BadRoad> badRoads, Motor motor,
+    public Car(AtomicInteger id, Graph graph, Vertex startVertex, ArrayList<BadRoad> badRoads, Motor motor,
         ArrayList<Vertex> carServiceIntersections,
         ArrayList<CarService> carServices, PollutionDatabase pollutionDatabase, FlatTyreInformer flatTyreInformer) {
         this.carID = String.valueOf(id.getAndIncrement());

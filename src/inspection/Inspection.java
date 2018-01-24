@@ -38,9 +38,10 @@ public class Inspection implements Runnable {
             }
 
             try {
-                System.out.println("........" + restriction.getPollutionRestriction() + ".BLOCK" + counter + "......................" +
-                        ".........Waiting 5000 ms..............");
-                Thread.sleep(10000);
+                System.out.println("........" + restriction.getPollutionRestriction() + ".BLOCK" + counter
+                        + "......................" +
+                        ".........Waiting 2000 ms..............");
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -55,7 +56,8 @@ public class Inspection implements Runnable {
             pollutionDatabase.resetPollutionCounter(pollutionAmountAfterReset);
             pollutionDatabase.informAboutReleasedRestrictions();
 
-            System.out.println("........" + restriction.getPollutionRestriction() + ".UNBLOCK" + counter + "........................" +
+            System.out.println("........" + restriction.getPollutionRestriction() + ".UNBLOCK" + counter
+                    + "........................" +
                     "..................UNBLOCKED..............");
 
             counter++;

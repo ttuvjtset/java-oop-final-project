@@ -11,7 +11,7 @@ public class PollutionDatabaseView {
     private long electricCars;
     private long lemonadeCars;
 
-    String getJSON(PollutionDatabase pollutionDatabase) {
+    public String getJSON(PollutionDatabase pollutionDatabase) {
         updateDataFromDatabase(pollutionDatabase);
 
         double ecoMotorsPercentage = (((double) electricCars + (double) lemonadeCars)
@@ -26,7 +26,7 @@ public class PollutionDatabaseView {
                 "}";
     }
 
-    String getText(PollutionDatabase pollutionDatabase) {
+    public String getText(PollutionDatabase pollutionDatabase) {
         updateDataFromDatabase(pollutionDatabase);
 
         double ecoMotorsPercentage = ((((double) electricCars + (double) lemonadeCars)
