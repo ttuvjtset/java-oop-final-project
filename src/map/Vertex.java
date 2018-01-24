@@ -34,6 +34,11 @@ public class Vertex {
     public void setLabel(int uniqueLabel) {
         this.uniqueLabel = uniqueLabel;
     }
+
+    @Override
+    public String toString() {
+        return "Vertex " + uniqueLabel;
+    }
 }
 
 

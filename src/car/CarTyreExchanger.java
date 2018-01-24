@@ -58,7 +58,7 @@ public class CarTyreExchanger implements Runnable {
                         driveCarToNextRandomIntersectionFromThe(currentIntersection);
 
                         System.out.println(">>> TYRE EXCHANGER CAR >>> currently at " + currentIntersection + "; " +
-                                "car.Car with flat tyres is at "
+                                "Car with flat tyres is at "
                                 + carWithFlatTyres.get().getVertexWhereCarIsWaitingForRepair());
                     }
                 }
