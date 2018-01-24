@@ -7,8 +7,8 @@ import map.Graph;
 import map.Vertex;
 import motors.Motor;
 import service.CarService;
-import tyres.TyresFruitPaste;
 import tyres.Tyres;
+import tyres.TyresFruitPaste;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,10 +21,10 @@ public class Car implements Runnable {
 
     private static final int DRIVE_TIME_UPPER_LIMIT = 200;
     private static final int DRIVE_TIME_LOWER_LIMIT = 30;
-    public static final int TIME_FOR_CAR_SERVICE = 50;
-    public static final int WAITING_TIMES_THRESHOLD_FOR_NON_ECO_MOTORS = 2;
-    public static final int UPPER_PROBABILITY_LIMIT = 6;
-    public static final int BAD_STREET_COUNT_THRESHOLD = 3;
+    private static final int TIME_FOR_CAR_SERVICE = 50;
+    private static final int WAITING_TIMES_THRESHOLD_FOR_NON_ECO_MOTORS = 2;
+    private static final int UPPER_PROBABILITY_LIMIT = 6;
+    private static final int BAD_STREET_COUNT_THRESHOLD = 3;
 
     private String carID;
     private Graph graph;

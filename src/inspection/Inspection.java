@@ -24,7 +24,7 @@ public class Inspection implements Runnable {
 
     @Override
     public void run() {
-        int counter = 1;
+        int blockCounter = 1;
 
         while (!Thread.interrupted()) {
             double pollutionAmountAfterReset = 0;
@@ -32,7 +32,7 @@ public class Inspection implements Runnable {
             try {
                 double pollutionWhenRestrictionApplies = pollutionDatabase.
                         getTotalPollutionWhenRestrictionApplies(restriction);
-                if (internalCombustionMotorsOverLimit()) {
+                if (tooManyCarsWithInternalCombustionMotors()) {
                     pollutionAmountAfterReset = pollutionWhenRestrictionApplies * POLLUTION_RESET_RATIO_WHEN_OVER_LIMIT;
                 }
                 System.out.println("====== PollutionWhenRestrictionApplies: " + pollutionWhenRestrictionApplies
@@ -43,7 +43,7 @@ public class Inspection implements Runnable {
             }
 
             try {
-                System.out.println("........" + restriction.getPollutionRestriction() + ".BLOCK" + counter
+                System.out.println("........" + restriction.getPollutionRestriction() + ".BLOCK" + blockCounter
                         + "......................" +
                         ".........Waiting 2000 ms..............");
                 Thread.sleep(BLOCKING_TIME);
@@ -61,15 +61,15 @@ public class Inspection implements Runnable {
             pollutionDatabase.resetPollutionCounter(pollutionAmountAfterReset);
             pollutionDatabase.informAboutReleasedRestrictions();
 
-            System.out.println("........" + restriction.getPollutionRestriction() + ".UNBLOCK" + counter
+            System.out.println("........" + restriction.getPollutionRestriction() + ".UNBLOCK" + blockCounter
                     + "........................" +
                     "..................UNBLOCKED..............");
 
-            counter++;
+            blockCounter++;
         }
     }
 
-    private boolean internalCombustionMotorsOverLimit() {
+    private boolean tooManyCarsWithInternalCombustionMotors() {
         return pollutionDatabase.getInternalCombustionMotorCount() >= INTERNAL_COMBUSTION_MOTOR_COUNT_THRESHOLD;
     }
 }

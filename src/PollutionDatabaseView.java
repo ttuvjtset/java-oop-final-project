@@ -7,7 +7,6 @@ import motors.LemonadeMotor;
 
 public class PollutionDatabaseView {
     private static final int CONVERT_TO_PERCENTAGE = 100;
-
     private long benzineCars;
     private long dieselCars;
     private long electricCars;

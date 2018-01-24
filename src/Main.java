@@ -23,18 +23,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
+
+    private static final int FIRST_CAR_UNIQUE_ID = 1;
+    private static final int TOTAL_THREAD_COUNT = 210;
+    private static final int TIMEOUT_BEFORE_CREATING_CARS = 100;
+    private static final int INTERNAL_COMBUSTION_ENGINE_CARS = 30;
+    private static final int ECO_ENGINE_CARS = 10;
+
     public static void main(String[] args) throws InterruptedException {
-        Graph graph = new Graph();
-
-        DrivingRestrictionTable drivingRestrictionTable = new DrivingRestrictionTable();
-        PollutionDatabase pollutionDatabase = new PollutionDatabase(drivingRestrictionTable);
-        Restriction restrictionForBenzine = new RestrictionForBenzine();
-        Restriction restrictionForDiesel = new RestrictionForDiesel();
-
-        FlatTyreInformer flatTyreInformer = new FlatTyreInformer();
-
-        AtomicInteger uniqueCarIDs = new AtomicInteger(1);
-
         Vertex vertex1 = new Vertex(1);
         Vertex vertex2 = new Vertex(2);
         Vertex vertex3 = new Vertex(3);
@@ -52,11 +48,7 @@ public class Main {
         Vertex vertex15 = new Vertex(15);
         Vertex vertex16 = new Vertex(16);
 
-        ArrayList<Vertex> carServiceIntersections = new ArrayList<>(Arrays.asList(vertex2, vertex12, vertex5, vertex8));
-        ArrayList<CarService> carServices = new ArrayList<>(Arrays.asList(new CarService(pollutionDatabase),
-                new CarService(pollutionDatabase),
-                new CarService(pollutionDatabase),
-                new CarService(pollutionDatabase)));
+        Graph graph = new Graph();
 
         graph.addVertex(vertex1);
         graph.addVertex(vertex2);
@@ -75,6 +67,21 @@ public class Main {
         graph.addVertex(vertex15);
         graph.addVertex(vertex16);
 
+        DrivingRestrictionTable drivingRestrictionTable = new DrivingRestrictionTable();
+        PollutionDatabase pollutionDatabase = new PollutionDatabase(drivingRestrictionTable);
+        Restriction restrictionForBenzine = new RestrictionForBenzine();
+        Restriction restrictionForDiesel = new RestrictionForDiesel();
+
+        FlatTyreInformer flatTyreInformer = new FlatTyreInformer();
+
+        AtomicInteger uniqueCarIDs = new AtomicInteger(FIRST_CAR_UNIQUE_ID);
+
+        ArrayList<Vertex> carServiceIntersections = new ArrayList<>(Arrays.asList(vertex2, vertex12, vertex5, vertex8));
+        ArrayList<CarService> carServices = new ArrayList<>(Arrays.asList(new CarService(pollutionDatabase),
+                new CarService(pollutionDatabase),
+                new CarService(pollutionDatabase),
+                new CarService(pollutionDatabase)));
+
         addEdges(graph);
 
         System.out.println(graph.getAdjList());
@@ -87,13 +94,14 @@ public class Main {
         PollutionDatabaseView pollutionDatabaseView = new PollutionDatabaseView();
 
 
-        ExecutorService executor = Executors.newFixedThreadPool(210);
+        ExecutorService executor = Executors.newFixedThreadPool(TOTAL_THREAD_COUNT);
         executor.submit(new Bird(pollutionDatabaseView, pollutionDatabase));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForBenzine));
         executor.submit(new Inspection(pollutionDatabase, drivingRestrictionTable, restrictionForDiesel));
 
-        Thread.sleep(100);
-        for (int carsCount = 0; carsCount < 30; carsCount++) {
+        Thread.sleep(TIMEOUT_BEFORE_CREATING_CARS);
+
+        for (int carsCount = 0; carsCount < INTERNAL_COMBUSTION_ENGINE_CARS; carsCount++) {
             executor.submit(new Car(uniqueCarIDs, graph, vertex14, badRoads, new BenzineMotor(), carServiceIntersections,
                     carServices, pollutionDatabase, flatTyreInformer));
             executor.submit(new Car(uniqueCarIDs, graph, vertex15, badRoads, new BenzineMotor(), carServiceIntersections,
@@ -108,7 +116,7 @@ public class Main {
                     carServices, pollutionDatabase, flatTyreInformer));
         }
 
-        for (int carsCount = 0; carsCount < 10; carsCount++) {
+        for (int carsCount = 0; carsCount < ECO_ENGINE_CARS; carsCount++) {
             executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new LemonadeMotor(), carServiceIntersections,
                     carServices, pollutionDatabase, flatTyreInformer));
             executor.submit(new Car(uniqueCarIDs, graph, vertex1, badRoads, new ElectricMotor(), carServiceIntersections,
