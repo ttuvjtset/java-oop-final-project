@@ -11,7 +11,6 @@ import java.util.concurrent.BlockingQueue;
 
 public class CarService {
     private BlockingQueue<Car> queue;
-    //private car.Car carInTheService;
     private PollutionDatabase pollutionDatabase;
 
     public CarService(PollutionDatabase pollutionDatabase) {
@@ -20,15 +19,12 @@ public class CarService {
     }
 
     public void addCar(Car car) throws InterruptedException {
-        //this.carInTheService = car;
         System.out.println("$$$ entering queue " + car.getCarMotorTypeAndID() + "$$$");
         queue.put(car);
     }
 
     public void removeCar() throws InterruptedException {
-        //if (carInTheService.equals(car)) {
-            queue.take();
-        //}
+        queue.take();
     }
 
     public void changeMotorAndReregister(Car car) {

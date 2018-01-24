@@ -1,7 +1,7 @@
 package tyres;
 
 
-public class FruitPasteTyres extends Tyres {
+public class TyresFruitPaste extends Tyres {
     private volatile boolean brokenTyres = false;
 
     @Override

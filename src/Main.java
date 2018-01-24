@@ -1,4 +1,5 @@
 import car.Car;
+import car.CarTyreExchanger;
 import inspection.FlatTyreInformer;
 import inspection.Inspection;
 import inspection.PollutionDatabase;
@@ -14,7 +15,6 @@ import restrictions.Restriction;
 import restrictions.RestrictionForBenzine;
 import restrictions.RestrictionForDiesel;
 import service.CarService;
-import car.CarTyreExchanger;
 
 import java.util.ArrayList;
 import java.util.Arrays;

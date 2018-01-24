@@ -7,7 +7,7 @@ import map.Graph;
 import map.Vertex;
 import motors.Motor;
 import service.CarService;
-import tyres.FruitPasteTyres;
+import tyres.TyresFruitPaste;
 import tyres.Tyres;
 
 import java.util.ArrayList;
@@ -18,6 +18,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 public class Car implements Runnable {
+
+    private static final int DRIVE_TIME_UPPER_LIMIT = 200;
+    private static final int DRIVE_TIME_LOWER_LIMIT = 30;
+    public static final int TIME_FOR_CAR_SERVICE = 50;
+    public static final int WAITING_TIMES_THRESHOLD_FOR_NON_ECO_MOTORS = 2;
+    public static final int UPPER_PROBABILITY_LIMIT = 6;
+    public static final int BAD_STREET_COUNT_THRESHOLD = 3;
+
     private String carID;
     private Graph graph;
     private Vertex startVertex;
@@ -50,7 +58,7 @@ public class Car implements Runnable {
         this.tyres = new Tyres();
     }
 
-    public Tyres getTyres() {
+    Tyres getTyres() {
         return tyres;
     }
 
@@ -82,12 +90,12 @@ public class Car implements Runnable {
 
         while (!Thread.interrupted()) {
 
-            if (intersectionCounter % 5 == 0) {
+            if (everyFifthIntersection(intersectionCounter)) {
                 pollutionDatabase.addPollutionAmount(motor, pollution);
                 pollution = 0;
             }
 
-            if (intersectionCounter % 7 == 0) {
+            if (everySeventhIntersection(intersectionCounter)) {
                 try {
                     System.out.println(getCarMotorTypeAndID() + " asking permission to continue driving");
                     boolean furtherDrivingBlockedBecauseOfMotor = pollutionDatabase.
@@ -95,7 +103,7 @@ public class Car implements Runnable {
 
                     if (furtherDrivingBlockedBecauseOfMotor) {
                         waitingTimesBecauseOfNonEcoFriendlyMotor++;
-                        System.out.println(getCarMotorTypeAndID() + " waiting times because of non eco motor counter: " +
+                        System.out.println(getCarMotorTypeAndID() + " waiting times because of non eco motor counter: "
                                 + waitingTimesBecauseOfNonEcoFriendlyMotor);
 
                         if (carOwnerDecidesToChangeMotorToEcoFriendly(waitingTimesBecauseOfNonEcoFriendlyMotor)) {
@@ -127,7 +135,7 @@ public class Car implements Runnable {
                         + drivenThroughBadStreetCounter);
             }
 
-            if (drivenThroughBadStreetCounter == 3 && !(tyres instanceof FruitPasteTyres)) {
+            if (tiresAreBroken(drivenThroughBadStreetCounter)) {
                 System.out.println(getCarMotorTypeAndID() + " !!!! TYRES BROKEN !!!!");
                 tyres.setBrokenTyres();
                 try {
@@ -146,12 +154,23 @@ public class Car implements Runnable {
 
                 System.out.println(getCarMotorTypeAndID() + " !!!! TYRES FIXED !!!!");
 
-                //workaround
                 drivenThroughBadStreetCounter = 0;
             }
 
             intersectionCounter++;
         }
+    }
+
+    private boolean everySeventhIntersection(int intersectionCounter) {
+        return intersectionCounter % 7 == 0;
+    }
+
+    private boolean everyFifthIntersection(int intersectionCounter) {
+        return intersectionCounter % 5 == 0;
+    }
+
+    private boolean tiresAreBroken(int drivenThroughBadStreetCounter) {
+        return drivenThroughBadStreetCounter == BAD_STREET_COUNT_THRESHOLD && !(tyres instanceof TyresFruitPaste);
     }
 
     public String getCarMotorTypeAndID() {
@@ -166,11 +185,11 @@ public class Car implements Runnable {
     }
 
     private boolean carOwnerDecidesToChangeMotorToEcoFriendly(int waitingTimesBecauseOfMotorCounter) {
-        return waitingTimesBecauseOfMotorCounter > 2 && probabilityOneSixth();
+        return waitingTimesBecauseOfMotorCounter > WAITING_TIMES_THRESHOLD_FOR_NON_ECO_MOTORS && probabilityOneSixth();
     }
 
     private boolean probabilityOneSixth() {
-        return new Random().nextInt(6) == 0;
+        return new Random().nextInt(UPPER_PROBABILITY_LIMIT) == 0;
     }
 
     private void doCarService() {
@@ -184,7 +203,7 @@ public class Car implements Runnable {
         System.out.println(getCarMotorTypeAndID() + " $$$ Beginning service $$$");
 
         try {
-            Thread.sleep(50);
+            Thread.sleep(TIME_FOR_CAR_SERVICE);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -223,11 +242,11 @@ public class Car implements Runnable {
         }
     }
 
-    public void changeTyres(Tyres newTyres) {
+    void changeTyres(Tyres newTyres) {
         tyres = newTyres;
     }
 
     private int getStreetDriveTime() {
-        return new Random().nextInt(200 - 30) + 30;
+        return new Random().nextInt(DRIVE_TIME_UPPER_LIMIT - DRIVE_TIME_LOWER_LIMIT) + DRIVE_TIME_LOWER_LIMIT;
     }
 }

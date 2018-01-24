@@ -1,9 +1,12 @@
 package motors;
 
 public class DieselMotor implements Motor {
+
+    private static final int POLLUTION_RATIO_FOR_DIESEL_MOTORS = 3;
+
     @Override
     public double getPollutionRatio() {
-        return 3;
+        return POLLUTION_RATIO_FOR_DIESEL_MOTORS;
     }
 
     @Override

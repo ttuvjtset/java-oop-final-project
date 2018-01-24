@@ -40,7 +40,7 @@ public class Graph {
         return vertices.remove(v);
     }
 
-    public boolean addEdge(Edge e) {
+    private boolean addEdge(Edge e) {
         if (!edges.add(e)) return false;
 
         adjList.putIfAbsent(e.v1, new HashSet<>());
@@ -57,7 +57,7 @@ public class Graph {
                 new Vertex(vertexLabel2)));
     }
 
-    public boolean removeEdge(Edge e) {
+    private boolean removeEdge(Edge e) {
         if (!edges.remove(e)) return false;
         Set<Edge> edgesOfV1 = adjList.get(e.v1);
         Set<Edge> edgesOfV2 = adjList.get(e.v2);

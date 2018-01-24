@@ -6,6 +6,11 @@ import restrictions.RestrictionForBenzine;
 import restrictions.RestrictionForDiesel;
 
 public class Inspection implements Runnable {
+
+    private static final int INTERNAL_COMBUSTION_MOTOR_COUNT_THRESHOLD = 70;
+    private static final double POLLUTION_RESET_RATIO_WHEN_OVER_LIMIT = 0.4;
+    private static final int BLOCKING_TIME = 2000;
+
     private PollutionDatabase pollutionDatabase;
     private DrivingRestrictionTable drivingRestrictionTable;
     private Restriction restriction;
@@ -27,8 +32,8 @@ public class Inspection implements Runnable {
             try {
                 double pollutionWhenRestrictionApplies = pollutionDatabase.
                         getTotalPollutionWhenRestrictionApplies(restriction);
-                if (pollutionDatabase.getInternalCombustionMotorCount() >= 70) {
-                    pollutionAmountAfterReset = pollutionWhenRestrictionApplies * 0.4;
+                if (internalCombustionMotorsOverLimit()) {
+                    pollutionAmountAfterReset = pollutionWhenRestrictionApplies * POLLUTION_RESET_RATIO_WHEN_OVER_LIMIT;
                 }
                 System.out.println("====== PollutionWhenRestrictionApplies: " + pollutionWhenRestrictionApplies
                         + " ======");
@@ -41,7 +46,7 @@ public class Inspection implements Runnable {
                 System.out.println("........" + restriction.getPollutionRestriction() + ".BLOCK" + counter
                         + "......................" +
                         ".........Waiting 2000 ms..............");
-                Thread.sleep(2000);
+                Thread.sleep(BLOCKING_TIME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -62,5 +67,9 @@ public class Inspection implements Runnable {
 
             counter++;
         }
+    }
+
+    private boolean internalCombustionMotorsOverLimit() {
+        return pollutionDatabase.getInternalCombustionMotorCount() >= INTERNAL_COMBUSTION_MOTOR_COUNT_THRESHOLD;
     }
 }

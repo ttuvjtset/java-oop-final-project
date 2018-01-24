@@ -2,9 +2,12 @@ package motors;
 
 
 public class LemonadeMotor implements Motor {
+
+    private static final double POLLUTION_RATIO_FOR_LEMONADE_MOTORS = 0.5;
+
     @Override
     public double getPollutionRatio() {
-        return 0.5;
+        return POLLUTION_RATIO_FOR_LEMONADE_MOTORS;
     }
 
     @Override

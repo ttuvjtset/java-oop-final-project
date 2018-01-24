@@ -5,13 +5,16 @@ import map.Graph;
 import map.Vertex;
 import motors.ElectricMotor;
 import motors.LemonadeMotor;
-import tyres.FruitPasteTyres;
+import tyres.TyresFruitPaste;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Random;
 
 public class CarTyreExchanger implements Runnable {
+
+    private static final int DRIVE_TIME_UPPER_LIMIT = 200;
+    private static final int DRIVE_TIME_LOWER_LIMIT = 30;
 
     private Graph graph;
     private Vertex startVertex;
@@ -71,8 +74,8 @@ public class CarTyreExchanger implements Runnable {
 
             if (carWithFlatTyres.getCarWithFlatTyres().getMotor() instanceof ElectricMotor ||
                     carWithFlatTyres.getCarWithFlatTyres().getMotor() instanceof LemonadeMotor) {
-                System.out.println(">>> TYRE EXCHANGER CAR >>> installing FruitPasteTyres for eco friendly car");
-                carWithFlatTyres.getCarWithFlatTyres().changeTyres(new FruitPasteTyres());
+                System.out.println(">>> TYRE EXCHANGER CAR >>> installing TyresFruitPaste for eco friendly car");
+                carWithFlatTyres.getCarWithFlatTyres().changeTyres(new TyresFruitPaste());
             }
 
             carWithFlatTyres.getCarWithFlatTyres().getTyres().fixBrokenTyres();
@@ -103,6 +106,6 @@ public class CarTyreExchanger implements Runnable {
     }
 
     private int getStreetDriveTime() {
-        return new Random().nextInt(200 - 30) + 30;
+        return new Random().nextInt(DRIVE_TIME_UPPER_LIMIT - DRIVE_TIME_LOWER_LIMIT) + DRIVE_TIME_LOWER_LIMIT;
     }
 }

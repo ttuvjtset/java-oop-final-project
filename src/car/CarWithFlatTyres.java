@@ -12,11 +12,11 @@ public class CarWithFlatTyres {
         this.vertexWhereCarIsWaitingForRepair = vertexWhereCarIsWaitingForRepair;
     }
 
-    public Car getCarWithFlatTyres() {
+    Car getCarWithFlatTyres() {
         return carWithFlatTyres;
     }
 
-    public Vertex getVertexWhereCarIsWaitingForRepair() {
+    Vertex getVertexWhereCarIsWaitingForRepair() {
         return vertexWhereCarIsWaitingForRepair;
     }
 }
