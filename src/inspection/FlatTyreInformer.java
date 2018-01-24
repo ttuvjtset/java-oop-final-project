@@ -1,3 +1,7 @@
+package inspection;
+
+import car.Car;
+import car.CarWithFlatTyres;
 import map.Vertex;
 
 import java.util.ArrayList;
@@ -20,7 +24,7 @@ public class FlatTyreInformer {
 
     public void informAndAddToList(Car car, Vertex drivingToIntersection) throws InterruptedException {
         synchronized (this) {
-            System.out.println("          !! EMERGENCY !! BROKEN TYRES !! Car " + car.getCarMotorTypeAndID()
+            System.out.println("          !! EMERGENCY !! BROKEN TYRES !! car.Car " + car.getCarMotorTypeAndID()
                     + " at " + drivingToIntersection);
 
             carsWithFlatTyres.add(car);

@@ -1,7 +1,12 @@
+package car;
+
+import inspection.FlatTyreInformer;
 import inspection.PollutionDatabase;
+import map.BadRoad;
 import map.Graph;
 import map.Vertex;
 import motors.Motor;
+import service.CarService;
 import tyres.FruitPasteTyres;
 import tyres.Tyres;
 
@@ -28,8 +33,9 @@ public class Car implements Runnable {
     private Tyres tyres;
 
     public Car(AtomicInteger id, Graph graph, Vertex startVertex, ArrayList<BadRoad> badRoads, Motor motor,
-        ArrayList<Vertex> carServiceIntersections,
-        ArrayList<CarService> carServices, PollutionDatabase pollutionDatabase, FlatTyreInformer flatTyreInformer) {
+               ArrayList<Vertex> carServiceIntersections,
+               ArrayList<CarService> carServices, PollutionDatabase pollutionDatabase,
+               FlatTyreInformer flatTyreInformer) {
         this.carID = String.valueOf(id.getAndIncrement());
         this.graph = graph;
         this.startVertex = startVertex;

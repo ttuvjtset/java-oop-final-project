@@ -1,5 +1,4 @@
-import map.Vertex;
-
+package map;
 
 public class BadRoad {
     private Vertex firstIntersection;

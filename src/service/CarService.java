@@ -1,3 +1,6 @@
+package service;
+
+import car.Car;
 import inspection.PollutionDatabase;
 import motors.LemonadeMotor;
 import motors.Motor;
@@ -8,7 +11,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class CarService {
     private BlockingQueue<Car> queue;
-    //private Car carInTheService;
+    //private car.Car carInTheService;
     private PollutionDatabase pollutionDatabase;
 
     public CarService(PollutionDatabase pollutionDatabase) {

@@ -1,3 +1,6 @@
+package car;
+
+import inspection.FlatTyreInformer;
 import map.Graph;
 import map.Vertex;
 import motors.ElectricMotor;
@@ -52,7 +55,7 @@ public class CarTyreExchanger implements Runnable {
                         driveCarToNextRandomIntersectionFromThe(currentIntersection);
 
                         System.out.println(">>> TYRE EXCHANGER CAR >>> currently at " + currentIntersection + "; " +
-                                "Car with flat tyres is at "
+                                "car.Car with flat tyres is at "
                                 + carWithFlatTyres.get().getVertexWhereCarIsWaitingForRepair());
                     }
                 }

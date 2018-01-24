@@ -1,5 +1,8 @@
+import car.Car;
+import inspection.FlatTyreInformer;
 import inspection.Inspection;
 import inspection.PollutionDatabase;
+import map.BadRoad;
 import map.Graph;
 import map.Vertex;
 import motors.BenzineMotor;
@@ -10,6 +13,8 @@ import restrictions.DrivingRestrictionTable;
 import restrictions.Restriction;
 import restrictions.RestrictionForBenzine;
 import restrictions.RestrictionForDiesel;
+import service.CarService;
+import car.CarTyreExchanger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
